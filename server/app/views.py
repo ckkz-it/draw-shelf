@@ -56,9 +56,13 @@ async def refresh_token(request: web.Request) -> web.Response:
     return web.json_response({'access': access})
 
 
-async def get_markers(request: web.Request) -> web.Response:
+async def get_draw_sources(request: web.Request) -> web.Response:
     engine: Engine = request.app['db']
     async with engine.acquire() as conn:
         cursor: Cursor = await conn.execute(select([db.draw_source]))
         results = await cursor.fetchall()
         return web.json_response(data=DrawSourceSchema().dump(results, many=True))
+
+
+async def create_draw_source(request: web.Request) -> web.Response:
+    pass

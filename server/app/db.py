@@ -69,4 +69,5 @@ draw_source = sa.Table(
     sa.Column('type', sa.Enum(DrawSourceType), nullable=False),
     sa.Column('color', sa.Text, nullable=False),
     sa.Column('company', sa.Text, nullable=False),
+    sa.Column('code', sa.Text, nullable=False),
 )
