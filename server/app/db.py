@@ -7,8 +7,8 @@ import sqlalchemy as sa
 from aiohttp.web_app import Application
 from sqlalchemy.dialects.postgresql import UUID
 
+from helpers import stringified_uuid
 from settings import config
-from utils.helpers import stringified_uuid
 
 engine: Optional[aiopg.sa.Engine] = None
 sync_engine: Optional[sa.engine.Engine] = None

@@ -1,4 +1,9 @@
 import bcrypt
+from uuid import uuid4
+
+
+def stringified_uuid():
+    return str(uuid4())
 
 
 def hash_password(password: str) -> str:

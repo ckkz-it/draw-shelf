@@ -6,3 +6,7 @@ postgres:
   port: 5432
   minsize: 1
   maxsize: 5
+jwt:
+  secret: very secret
+  access_exp: 10
+  refresh_exp: 864000

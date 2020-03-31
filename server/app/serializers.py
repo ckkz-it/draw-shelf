@@ -4,8 +4,7 @@ from aiopg.sa.result import RowProxy
 from marshmallow import Schema, fields, post_load
 
 import db
-from exceptions import AuthenticationFailed
-from utils.password import hash_password, verify_password
+from helpers import hash_password
 
 
 class UserSchema(Schema):
@@ -41,19 +40,6 @@ class RegisterSchema(Schema):
 class LoginSchema(Schema):
     email = fields.Str(required=True)
     password = fields.Str(required=True)
-
-    @staticmethod
-    async def get_authenticated_user(engine: Engine, user_data: dict):
-        try:
-            async with engine.acquire() as conn:
-                cursor: Cursor = await conn.execute(db.user.select(db.user.c.email == user_data['email']))
-                result: RowProxy = await cursor.fetchone()
-                if result:
-                    if verify_password(user_data['password'], result.get('password')):
-                        return UserSchema().dump(result), None
-                raise AuthenticationFailed
-        except Exception as e:
-            return None, e
 
 
 class DrawSourceSchema(Schema):

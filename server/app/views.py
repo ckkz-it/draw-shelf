@@ -6,6 +6,8 @@ from sqlalchemy import select
 
 import db
 from serializers import DrawSourceSchema, RegisterSchema, LoginSchema
+from services.auth import AuthService
+from services.user import UserService
 
 
 async def register(request: web.Request) -> web.Response:
@@ -25,15 +27,29 @@ async def register(request: web.Request) -> web.Response:
 
 async def login(request: web.Request) -> web.Response:
     data = await request.text()
-    schema = LoginSchema()
     try:
-        user_data = schema.loads(data)
+        user_data = LoginSchema().loads(data)
     except ValidationError as e:
         return web.json_response(data=e.messages, status=400)
-    user, error = await schema.get_authenticated_user(request.app['db'], user_data)
+    result, error = await UserService.get_authenticated_user(
+        request.app['db'], user_data['email'], user_data['password']
+    )
     if error:
-        return web.json_response(data={'error': error.message}, status=401)
-    return web.json_response(user)
+        raise web.HTTPUnauthorized(reason='Authentication failed')
+    return web.json_response({
+        'access': AuthService.create_access_token(result),
+        'refresh': AuthService.create_refresh_token(result)
+    })
+
+
+async def refresh_token(request: web.Request) -> web.Response:
+    data = await request.json()
+    token = data.get('refresh')
+    if not token:
+        raise web.HTTPBadRequest(reason='Refresh token is required')
+    payload = AuthService.get_token_payload(token)
+    access = AuthService.create_access_token(payload)
+    return web.json_response({'access': access})
 
 
 async def get_markers(request: web.Request) -> web.Response:
