@@ -1,3 +1,4 @@
+import datetime
 import enum
 from typing import Optional
 
@@ -49,11 +50,11 @@ user_draw_source_relationship = sa.Table(
 user = sa.Table(
     'users', meta,
     sa.Column('id', UUID, primary_key=True, default=stringified_uuid),
-    sa.Column('name', sa.Text, nullable=False),
-    sa.Column('email', sa.Text, nullable=False, unique=True),
-    sa.Column('phone', sa.Text, nullable=False),
+    sa.Column('name', sa.Text, nullable=False, default=''),
+    sa.Column('email', sa.Text, nullable=False, unique=True, default=''),
+    sa.Column('phone', sa.Text, nullable=False, default=''),
     sa.Column('password', sa.Text, nullable=False),
-    sa.Column('created_at', sa.DateTime, nullable=False, server_default=sa.text('NOW()')),
+    sa.Column('created_at', sa.DateTime, nullable=False, default=datetime.datetime.utcnow),
 )
 
 

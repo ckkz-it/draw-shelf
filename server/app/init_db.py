@@ -1,12 +1,14 @@
+import sqlalchemy as sa
+
 import db
 from utils.password import hash_password
 
 
-def create_tables(eng):
+def create_tables(eng: sa.engine.Engine):
     db.meta.create_all(bind=eng)
 
 
-def sample_data(eng):
+def sample_data(eng: sa.engine.Engine):
     user = {
         'name': 'Andrey Laguta',
         'email': 'cirkus.kz@gmail.com',

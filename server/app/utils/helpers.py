@@ -1,28 +1,18 @@
-import datetime
-import json
+from typing import List
 from uuid import uuid4
 
-from aiohttp.web_response import json_response
-
-
-class JSONEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, datetime.date):
-            return obj.isoformat()
-
-        try:
-            return obj.tojson()
-        except AttributeError:
-            return json.JSONEncoder.default(self, obj)
+from sqlalchemy import Table, Column
 
 
 def stringified_uuid():
     return str(uuid4())
 
 
-def serialize(data):
-    return json.dumps(data, cls=JSONEncoder)
+class QueryHelper:
+    @staticmethod
+    def exclude_fields(table: Table, fields_to_exclude: List[str]) -> List[Column]:
+        return [c for c in table.columns if c.name not in fields_to_exclude]
 
-
-def jsonify(*args, **kwargs):
-    return json_response(dumps=serialize, *args, **kwargs)
+    @staticmethod
+    def all_fields(table: Table) -> List[Column]:
+        return [c for c in table.columns]
