@@ -6,8 +6,9 @@ from marshmallow import ValidationError
 from sqlalchemy import select
 
 import db
-from serializers import DrawSourceSchema, RegisterSchema, LoginSchema
+from serializers import DrawSourceSchema, RegisterSchema, LoginSchema, DrawSourceCreateSchema
 from services.auth import AuthService
+from services.draw_source import DrawSourceService
 from services.user import UserService
 
 
@@ -19,7 +20,7 @@ async def register(request: web.Request) -> web.Response:
     except ValidationError as e:
         return web.json_response(data=e.messages, status=400)
 
-    result, error = await schema.create_user(request.app['db'], user_data)
+    result, error = await UserService.create_user(request.app['db'], user_data)
     if error:
         return web.Response(text=str(error), status=500)
 
@@ -65,4 +66,14 @@ async def get_draw_sources(request: web.Request) -> web.Response:
 
 
 async def create_draw_source(request: web.Request) -> web.Response:
-    pass
+    data = await request.text()
+    try:
+        ds_data = DrawSourceCreateSchema().loads(data)
+    except ValidationError as e:
+        return web.json_response(data=e.messages, status=400)
+
+    draw_source, error = await DrawSourceService.create_draw_source(request.app['db'], ds_data)
+    if error:
+        return web.Response(text=str(error), status=500)
+
+    return web.json_response(data=draw_source)

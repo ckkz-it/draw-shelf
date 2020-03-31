@@ -22,11 +22,11 @@ class EnumField(fields.Str):
     enum: Enum = None
     default_error_messages = {
         'invalid_string': 'Not a valid string.',
-        'invalid_enum': 'Not a valid enum, values have to be in {values}.',
+        'invalid_enum': 'Not a valid enum, values have to be one of "{values}".',
     }
 
     def __init__(self, *args, **kwargs):
-        assert 'enum' in kwargs, '`enum` have to be specified'
+        assert 'enum' in kwargs, '`enum` has to be specified'
         self.enum = kwargs.pop('enum')
         super().__init__(*args, **kwargs)
 
