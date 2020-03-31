@@ -1,3 +1,4 @@
+import jwt
 from aiohttp import web
 from aiopg import Cursor
 from aiopg.sa import Engine
@@ -47,8 +48,11 @@ async def refresh_token(request: web.Request) -> web.Response:
     token = data.get('refresh')
     if not token:
         raise web.HTTPBadRequest(reason='Refresh token is required')
-    payload = AuthService.get_token_payload(token)
-    access = AuthService.create_access_token(payload)
+
+    try:
+        access = AuthService.refresh_token(token)
+    except jwt.InvalidTokenError as e:
+        raise web.HTTPForbidden(reason=f'Invalid authorization token, {e}')
     return web.json_response({'access': access})
 
 

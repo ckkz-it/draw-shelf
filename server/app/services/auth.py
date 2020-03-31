@@ -1,5 +1,4 @@
 import datetime
-from typing import Optional
 
 import jwt
 
@@ -26,8 +25,10 @@ class AuthService:
         return jwt.encode(payload, config['jwt']['secret'], 'HS256').decode('utf-8')
 
     @staticmethod
-    def get_token_payload(token: str) -> Optional[dict]:
-        try:
-            return jwt.decode(token, config['jwt']['secret'], algorithms='HS256')
-        except jwt.ExpiredSignature:
-            return None
+    def get_token_payload(token: str) -> dict:
+        return jwt.decode(token, config['jwt']['secret'], algorithms='HS256')
+
+    @classmethod
+    def refresh_token(cls, token: str) -> str:
+        payload = cls.get_token_payload(token)
+        return cls.create_access_token(payload)
