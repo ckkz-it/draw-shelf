@@ -8,6 +8,6 @@ postgres:
   maxsize: 5
 jwt:
   secret: very secret
-  access_exp: 10
+  access_exp: 1800
   refresh_exp: 864000
   algorithm: HS256
