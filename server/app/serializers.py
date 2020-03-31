@@ -4,7 +4,7 @@ from aiopg.sa.result import RowProxy
 from marshmallow import Schema, fields, post_load
 
 import db
-from helpers import hash_password
+from helpers import hash_password, EnumField
 
 
 class UserSchema(Schema):
@@ -16,8 +16,8 @@ class UserSchema(Schema):
 
 
 class RegisterSchema(Schema):
-    name = fields.Str(required=False, default='')
-    phone = fields.Str(required=False, default='')
+    name = fields.Str(default='')
+    phone = fields.Str(default='')
     email = fields.Str(required=True)
     password = fields.Str(required=True)
 
@@ -44,6 +44,14 @@ class LoginSchema(Schema):
 
 class DrawSourceSchema(Schema):
     id = fields.UUID()
-    type = fields.Str()
+    type = EnumField(enum=db.DrawSourceType)
     company = fields.Str()
     color = fields.Str()
+    code = fields.Str()
+
+
+class DrawSourceCreateSchema(Schema):
+    type = EnumField(enum=db.DrawSourceType, required=True)
+    company = fields.Str(required=True)
+    color = fields.Str(required=True)
+    code = fields.Str(required=True)
