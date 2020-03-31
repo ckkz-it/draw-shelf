@@ -10,3 +10,4 @@ jwt:
   secret: very secret
   access_exp: 10
   refresh_exp: 864000
+  algorithm: HS256
