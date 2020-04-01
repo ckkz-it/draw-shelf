@@ -15,6 +15,7 @@ class DrawSourceService(ModelServiceMixin):
             draw_source = await self._create(ds_data, return_created_obj=True)
         except Exception as e:
             return None, e
+        draw_source = self.schema().dump(draw_source)
         return draw_source, None
 
     async def get_all(
