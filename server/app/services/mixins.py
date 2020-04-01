@@ -16,8 +16,7 @@ class ModelServiceMixin:
     engine: Engine = None
 
     def __init__(self, engine: Engine):
-        assert hasattr(self, 'db_table') and self.db_table, '`db_table` attribute has to be specified on service'
-        assert hasattr(self, 'schema') and self.schema, '`schema` attribute has to be specified on service'
+        assert hasattr(self, 'db_table'), '`db_table` attribute has to be specified on service'
         self.engine = engine
 
     async def _create(self, data: dict, *, return_created_obj: bool = False) -> typing.Optional[dict]:

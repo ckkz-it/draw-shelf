@@ -17,8 +17,7 @@ class UserService(ModelServiceMixin):
 
     async def get_authenticated_user(self, email: str, password: str) -> tuple:
         try:
-            where = (db.user.c.email == email) & (db.user.c.name == 'Vasya')
-            result = await self._get_one(where)
+            result = await self._get_one(db.user.c.email == email)
             if result:
                 if verify_password(password, result.get('password')):
                     return UserSchema().dump(result), False
