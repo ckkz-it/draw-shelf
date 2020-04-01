@@ -2,10 +2,10 @@ import jwt
 from aiohttp import web
 from marshmallow import ValidationError
 
-from serializers import DrawSourceSchema, RegisterSchema, LoginSchema, DrawSourceCreateSchema
-from services.auth import AuthService
-from services.draw_source import DrawSourceService
-from services.user import UserService
+from app.serializers import RegisterSchema, LoginSchema, DrawSourceCreateSchema
+from app.services.auth import AuthService
+from app.services.draw_source import DrawSourceService
+from app.services.user import UserService
 
 
 async def register(request: web.Request) -> web.Response:

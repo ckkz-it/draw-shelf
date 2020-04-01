@@ -1,10 +1,7 @@
-from aiopg import Cursor
-from aiopg.sa import Engine
-from aiopg.sa.result import RowProxy
 from marshmallow import Schema, fields, post_load
 
-import db
-from helpers import hash_password, EnumField
+from app import db
+from app.helpers import hash_password, EnumField
 
 
 class UserSchema(Schema):

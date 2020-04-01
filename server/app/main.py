@@ -1,9 +1,9 @@
 from aiohttp import web
 from aiohttp_jwt import JWTMiddleware
 
-from db import init_pg, close_pg
-from routes import setup_routes
-from settings import config
+from app.db import init_pg, close_pg
+from app.routes import setup_routes
+from app.settings import config
 
 app = web.Application(
     middlewares=[
