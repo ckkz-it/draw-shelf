@@ -1,11 +1,7 @@
 import jwt
 from aiohttp import web
-from aiopg import Cursor
-from aiopg.sa import Engine
 from marshmallow import ValidationError
-from sqlalchemy import select
 
-import db
 from serializers import DrawSourceSchema, RegisterSchema, LoginSchema, DrawSourceCreateSchema
 from services.auth import AuthService
 from services.draw_source import DrawSourceService
@@ -20,11 +16,11 @@ async def register(request: web.Request) -> web.Response:
     except ValidationError as e:
         return web.json_response(data=e.messages, status=400)
 
-    result, error = await UserService.create_user(request.app['db'], user_data)
+    result, error = await UserService(engine=request.app['db']).create(user_data)
     if error:
         return web.Response(text=str(error), status=500)
 
-    return web.Response()
+    return web.Response(status=201)
 
 
 async def login(request: web.Request) -> web.Response:
@@ -33,11 +29,12 @@ async def login(request: web.Request) -> web.Response:
         user_data = LoginSchema().loads(data)
     except ValidationError as e:
         return web.json_response(data=e.messages, status=400)
-    result, error = await UserService.get_authenticated_user(
-        request.app['db'], user_data['email'], user_data['password']
+    result, error = await UserService(engine=request.app['db']).get_authenticated_user(
+        user_data['email'],
+        user_data['password'],
     )
     if error:
-        raise web.HTTPUnauthorized(reason='Authentication failed')
+        raise web.json_response(data={'error': 'Authentication failed'}, status=401)
     return web.json_response({
         'access': AuthService.create_access_token(result),
         'refresh': AuthService.create_refresh_token(result)
@@ -58,11 +55,8 @@ async def refresh_token(request: web.Request) -> web.Response:
 
 
 async def get_draw_sources(request: web.Request) -> web.Response:
-    engine: Engine = request.app['db']
-    async with engine.acquire() as conn:
-        cursor: Cursor = await conn.execute(select([db.draw_source]))
-        results = await cursor.fetchall()
-        return web.json_response(data=DrawSourceSchema().dump(results, many=True))
+    data = DrawSourceService(engine=request.app['db']).get_all()
+    return web.json_response(data)
 
 
 async def create_draw_source(request: web.Request) -> web.Response:
@@ -70,10 +64,10 @@ async def create_draw_source(request: web.Request) -> web.Response:
     try:
         ds_data = DrawSourceCreateSchema().loads(data)
     except ValidationError as e:
-        return web.json_response(data=e.messages, status=400)
+        return web.json_response(e.messages, status=400)
 
-    draw_source, error = await DrawSourceService.create_draw_source(request.app['db'], ds_data)
+    draw_source, error = await DrawSourceService(engine=request.app['db']).create(ds_data)
     if error:
         return web.Response(text=str(error), status=500)
 
-    return web.json_response(data=draw_source)
+    return web.json_response(draw_source)
