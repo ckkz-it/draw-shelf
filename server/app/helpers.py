@@ -22,7 +22,7 @@ class EnumField(fields.Str):
     enum: Enum = None
     default_error_messages = {
         'invalid_string': 'Not a valid string.',
-        'invalid_enum': 'Not a valid enum, values have to be one of "{values}".',
+        'invalid_enum': 'Not a valid value, has to be one of ({values}).',
     }
 
     def __init__(self, *args, **kwargs):

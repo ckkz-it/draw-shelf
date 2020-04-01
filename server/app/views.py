@@ -1,3 +1,5 @@
+import json
+
 import jwt
 from aiohttp import web
 from marshmallow import ValidationError
@@ -42,10 +44,13 @@ async def login(request: web.Request) -> web.Response:
 
 
 async def refresh_token(request: web.Request) -> web.Response:
-    data = await request.json()
-    token = data.get('refresh')
+    try:
+        data = await request.json()
+    except json.JSONDecodeError:
+        return web.json_response(data={'error': 'Refresh token is required'}, status=400)
+    token = data and data.get('refresh')
     if not token:
-        raise web.HTTPBadRequest(reason='Refresh token is required')
+        return web.json_response(data={'error': 'Refresh token is required'}, status=400)
 
     try:
         access = AuthService.refresh_token(token)
