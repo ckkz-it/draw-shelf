@@ -1,17 +1,24 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 
 import './App.css';
-import { useStores } from './hooks/user-stores';
+import Login from './components/Login';
+import Register from './components/Register';
 
 const App: React.FC = observer(() => {
-  const { authStore } = useStores();
-
   return (
-    <>
-      <div>{authStore.accessToken}</div>
-      <button onClick={() => authStore.setAccessToken('123')}>set token</button>
-    </>
+    <Router>
+      <Switch>
+        <Redirect exact from="/" to="/login" />
+        <Route exact path="/login">
+          <Login />
+        </Route>
+        <Route exact path="/register">
+          <Register />
+        </Route>
+      </Switch>
+    </Router>
   );
 });
 
