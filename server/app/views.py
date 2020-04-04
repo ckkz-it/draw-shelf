@@ -36,7 +36,7 @@ async def login(request: web.Request) -> web.Response:
         user_data['password'],
     )
     if error:
-        raise web.json_response(data={'error': 'Authentication failed'}, status=401)
+        return web.json_response(data={'error': 'Authentication failed'}, status=401)
     return web.json_response({
         'access': AuthService.create_access_token(result),
         'refresh': AuthService.create_refresh_token(result)
