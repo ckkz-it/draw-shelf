@@ -5,9 +5,10 @@ import { Button, Divider, Form, InputOnChangeData } from 'semantic-ui-react';
 
 import AuthWrapper from '../Wrapper';
 import { useStores } from '../../../hooks/user-stores';
+import { ISignUp } from '../../../interfaces/auth';
 
 const Register: React.FC = observer(() => {
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [form, setForm] = useState<ISignUp>({ name: '', phone: '', email: '', password: '' });
 
   const { authStore } = useStores();
 
@@ -15,19 +16,32 @@ const Register: React.FC = observer(() => {
     setForm((v) => ({ ...v, [name]: value }));
   };
 
-  const onSubmit = () => {
-    const { email, password } = form;
-    console.log({ form });
+  const onSubmit = async () => {
+    await authStore.signUp(form);
   };
 
   return (
     <AuthWrapper>
       <Form onSubmit={onSubmit}>
         <Form.Input
+          name="name"
+          label="Name"
+          type="text"
+          value={form.name}
+          onChange={handleChange}
+        />
+        <Form.Input
           name="email"
           label="Email"
           type="email"
           value={form.email}
+          onChange={handleChange}
+        />
+        <Form.Input
+          name="phone"
+          label="Phone"
+          type="text"
+          value={form.phone}
           onChange={handleChange}
         />
         <Form.Input

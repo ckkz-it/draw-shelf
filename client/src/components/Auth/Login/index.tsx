@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import { Button, Container, Divider, Form, InputOnChangeData } from 'semantic-ui-react';
+import { Button, Divider, Form, InputOnChangeData } from 'semantic-ui-react';
 
 import AuthWrapper from '../Wrapper';
 import { useStores } from '../../../hooks/user-stores';
@@ -15,9 +15,9 @@ const Login: React.FC = observer(() => {
     setForm((v) => ({ ...v, [name]: value }));
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     const { email, password } = form;
-    console.log({ form });
+    await authStore.login(email, password);
   };
 
   return (

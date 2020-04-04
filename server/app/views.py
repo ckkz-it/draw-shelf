@@ -22,7 +22,7 @@ async def register(request: web.Request) -> web.Response:
     if error:
         return web.Response(text=str(error), status=500)
 
-    return web.Response(status=201)
+    return web.json_response(result, status=201)
 
 
 async def login(request: web.Request) -> web.Response:
