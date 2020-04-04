@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-d
 
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
+import ProtectedRoute from './components/shared/ProtectedRoute';
+import Shelf from './components/Shelf';
 
 const App: React.FC = observer(() => {
   return (
@@ -16,6 +18,9 @@ const App: React.FC = observer(() => {
         <Route exact path="/sign-up">
           <Register />
         </Route>
+        <ProtectedRoute exact path="/shelf">
+          <Shelf />
+        </ProtectedRoute>
       </Switch>
     </Router>
   );

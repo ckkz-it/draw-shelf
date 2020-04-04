@@ -1,14 +1,15 @@
 import React, { ChangeEvent, useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { Button, Divider, Form, InputOnChangeData } from 'semantic-ui-react';
 
 import AuthWrapper from '../Wrapper';
 import { useStores } from '../../../hooks/user-stores';
-import { Link } from 'react-router-dom';
 
 const Login: React.FC = observer(() => {
   const [form, setForm] = useState({ email: '', password: '' });
 
+  const history = useHistory();
   const { authStore } = useStores();
 
   const handleChange = (e: ChangeEvent, { name, value }: InputOnChangeData) => {
@@ -18,6 +19,7 @@ const Login: React.FC = observer(() => {
   const onSubmit = async () => {
     const { email, password } = form;
     await authStore.login(email, password);
+    history.push('/shelf');
   };
 
   return (
