@@ -2,9 +2,8 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 
-import './App.css';
-import Login from './components/Login';
-import Register from './components/Register';
+import Login from './components/Auth/Login';
+import Register from './components/Auth/Register';
 
 const App: React.FC = observer(() => {
   return (
@@ -14,7 +13,7 @@ const App: React.FC = observer(() => {
         <Route exact path="/login">
           <Login />
         </Route>
-        <Route exact path="/register">
+        <Route exact path="/sign-up">
           <Register />
         </Route>
       </Switch>
