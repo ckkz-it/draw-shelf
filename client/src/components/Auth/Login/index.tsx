@@ -39,7 +39,7 @@ const Login: React.FC = observer(() => {
           value={form.password}
           onChange={handleChange}
         />
-        <div style={{ position: 'relative' }}>
+        <div className="position-relative">
           <Button type="submit">Submit</Button>
           <Divider vertical>Or</Divider>
           <Button as={Link} to="/sign-up" floated="right">
