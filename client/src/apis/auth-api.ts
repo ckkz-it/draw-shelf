@@ -1,9 +1,9 @@
 export class AuthApi {
-  login(email: string, password: string) {
+  async login(email: string, password: string) {
     console.log(email, password);
   }
 
-  signUp(data: any) {
+  async signUp(data: any) {
     console.log(data);
   }
 }
