@@ -1,10 +1,11 @@
 import React, { ChangeEvent, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
-import { Button, Divider, Form, InputOnChangeData } from 'semantic-ui-react';
+import { Button, Form, Header, InputOnChangeData } from 'semantic-ui-react';
 
 import AuthWrapper from '../Wrapper';
 import { useStores } from '../../../hooks/user-stores';
+import { StyledButtonWrapper } from './styles';
 
 const Login: React.FC = observer(() => {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -24,28 +25,34 @@ const Login: React.FC = observer(() => {
 
   return (
     <AuthWrapper>
+      <Header as="h1" textAlign="center" color="grey" style={{ marginBottom: '2rem' }}>
+        Login
+      </Header>
       <Form onSubmit={onSubmit}>
         <Form.Input
           name="email"
-          label="Email"
+          placeholder="Email"
           type="email"
+          size="large"
           value={form.email}
           onChange={handleChange}
         />
         <Form.Input
           name="password"
-          label="Password"
+          placeholder="Password"
           type="password"
+          size="large"
           value={form.password}
           onChange={handleChange}
         />
-        <div className="position-relative">
-          <Button type="submit">Submit</Button>
-          <Divider vertical>Or</Divider>
-          <Button as={Link} to="/sign-up" floated="right">
+        <StyledButtonWrapper>
+          <Button type="submit" color="yellow">
+            Login
+          </Button>
+          <Button inverted color="orange" as={Link} to="/sign-up">
             Sign Up
           </Button>
-        </div>
+        </StyledButtonWrapper>
       </Form>
     </AuthWrapper>
   );

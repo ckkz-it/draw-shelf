@@ -55,7 +55,7 @@ const Register: React.FC = observer(() => {
           <Button type="submit">Submit</Button>
           <Divider vertical>Or</Divider>
           <Button as={Link} to="/login" floated="right">
-            Login
+            To Login
           </Button>
         </div>
       </Form>

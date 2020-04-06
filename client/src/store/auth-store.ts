@@ -1,30 +1,35 @@
 import { action, computed, observable } from 'mobx';
 import jwt from 'jsonwebtoken';
 
-import { storagePrefix } from '../config';
+import { jwtSecret, storagePrefix } from '../config';
 import { AuthApi } from '../apis/auth-api';
 import { ISignUp, IUser } from '../interfaces/auth';
+import { UserStore } from './user-store';
 
 export class AuthStore {
   private accessTokenKey = storagePrefix + 'access';
   private refreshTokenKey = storagePrefix + 'refresh';
-  private api: AuthApi;
 
   @observable public accessToken: string | null = null;
   @observable public refreshToken: string | null = null;
-  @observable public user: IUser | null = null;
 
   @observable public isLoading = false;
   @observable public loginError: any = null;
 
-  constructor(authApi: AuthApi) {
-    this.api = authApi;
+  constructor(private api: AuthApi, private userStore: UserStore) {
     this.setAccessToken(window.localStorage.getItem(this.accessTokenKey));
     this.setRefreshToken(window.localStorage.getItem(this.refreshTokenKey));
+    if (this.accessToken) {
+      jwt.verify(this.accessToken, jwtSecret, { algorithms: ['HS256'] }, (err, decoded) => {
+        if (!err) {
+          this.userStore.setUser(decoded as IUser);
+        }
+      });
+    }
   }
 
   @computed get isAuthenticated() {
-    return this.user !== null;
+    return this.userStore.user !== null;
   }
 
   @action setAccessToken(token: string | null) {
@@ -47,15 +52,11 @@ export class AuthStore {
     }
   }
 
-  @action setUser(user: IUser) {
-    this.user = user;
-  }
-
   @action async login(email: string, password: string) {
     const data = await this.api.login(email, password);
     this.setAccessToken(data.access);
     this.setRefreshToken(data.refresh);
-    this.setUser(jwt.decode(data.access) as IUser);
+    this.userStore.setUser(jwt.decode(data.access) as IUser);
   }
 
   @action async signUp(signUpData: ISignUp) {
