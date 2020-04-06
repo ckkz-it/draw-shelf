@@ -1,12 +1,13 @@
 import React, { ChangeEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
-import { Button, Form, Header, InputOnChangeData } from 'semantic-ui-react';
+import { Button, Form, InputOnChangeData } from 'semantic-ui-react';
 
-import AuthWrapper from '../Wrapper';
+import AuthWrapper from '../AuthWrapper';
 import { useStores } from '../../../hooks/user-stores';
 import { ISignUp } from '../../../interfaces/auth';
 import { StyledButtonWrapper } from '../styles';
+import { AuthHeader } from '../AuthHeader';
 
 const Register: React.FC = observer(() => {
   const [form, setForm] = useState<ISignUp>({ name: '', phone: '', email: '', password: '' });
@@ -23,9 +24,7 @@ const Register: React.FC = observer(() => {
 
   return (
     <AuthWrapper>
-      <Header as="h1" textAlign="center" color="grey" style={{ marginBottom: '2rem' }}>
-        Sign Up
-      </Header>
+      <AuthHeader>Register</AuthHeader>
       <Form onSubmit={onSubmit}>
         <Form.Input
           name="name"

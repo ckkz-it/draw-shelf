@@ -12,7 +12,7 @@ const PageHeader: React.FC = () => {
   };
 
   return (
-    <Menu pointing secondary>
+    <Menu pointing secondary size="huge" color="yellow">
       <Menu.Item name="Shelf" as={NavLink} to="/shelf" />
       <Menu.Item name="Settings" as={NavLink} to="/settings" />
       <Menu.Menu position="right">

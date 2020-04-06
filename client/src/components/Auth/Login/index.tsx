@@ -1,11 +1,12 @@
 import React, { ChangeEvent, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
-import { Button, Form, Header, InputOnChangeData } from 'semantic-ui-react';
+import { Button, Form, InputOnChangeData } from 'semantic-ui-react';
 
-import AuthWrapper from '../Wrapper';
+import AuthWrapper from '../AuthWrapper';
 import { useStores } from '../../../hooks/user-stores';
 import { StyledButtonWrapper } from '../styles';
+import { AuthHeader } from '../AuthHeader';
 
 const Login: React.FC = observer(() => {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -25,9 +26,7 @@ const Login: React.FC = observer(() => {
 
   return (
     <AuthWrapper>
-      <Header as="h1" textAlign="center" color="grey" style={{ marginBottom: '2rem' }}>
-        Login
-      </Header>
+      <AuthHeader>Login</AuthHeader>
       <Form onSubmit={onSubmit}>
         <Form.Input
           name="email"
