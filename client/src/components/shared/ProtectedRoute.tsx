@@ -2,7 +2,7 @@ import React from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 
-import { useStores } from '../../hooks/user-stores';
+import { useStores } from '../../hooks/use-stores';
 
 const ProtectedRoute: React.FC<RouteProps> = observer(({ children, ...rest }) => {
   const { authStore } = useStores();

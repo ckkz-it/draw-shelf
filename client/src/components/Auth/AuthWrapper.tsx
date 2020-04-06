@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Segment } from 'semantic-ui-react';
 import styled from 'styled-components';
 
-import { useStores } from '../../hooks/user-stores';
+import { useStores } from '../../hooks/use-stores';
 import { Redirect } from 'react-router-dom';
 
 const StyledSegment = styled(Segment)`

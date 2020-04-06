@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Menu } from 'semantic-ui-react';
 
-import { useStores } from '../../hooks/user-stores';
+import { useStores } from '../../hooks/use-stores';
 
 const PageHeader: React.FC = () => {
   const { authStore } = useStores();

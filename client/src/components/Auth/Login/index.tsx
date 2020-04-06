@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite';
 import { Button, Form, InputOnChangeData } from 'semantic-ui-react';
 
 import AuthWrapper from '../AuthWrapper';
-import { useStores } from '../../../hooks/user-stores';
+import { useStores } from '../../../hooks/use-stores';
 import { StyledButtonWrapper } from '../styles';
 import { AuthHeader } from '../AuthHeader';
 
