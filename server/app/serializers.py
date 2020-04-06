@@ -28,11 +28,16 @@ class LoginSchema(Schema):
     password = fields.Str(required=True)
 
 
+class CompanySchema(Schema):
+    id = fields.UUID()
+    name = fields.Str()
+
+
 class DrawSourceSchema(Schema):
     id = fields.UUID()
     type = EnumField(enum=db.DrawSourceType)
     name = fields.Str()
-    company_id = fields.UUID()
+    company = fields.Nested(CompanySchema)
     color = fields.Str()
     code = fields.Str()
     color_category = fields.Str()

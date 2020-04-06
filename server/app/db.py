@@ -8,7 +8,6 @@ import sqlalchemy as sa
 from aiohttp.web_app import Application
 from sqlalchemy.dialects.postgresql import UUID
 
-from app.helpers import stringified_uuid
 from app.settings import config
 
 engine: Optional[aiopg.sa.Engine] = None
@@ -45,7 +44,7 @@ meta = sa.MetaData()
 user_draw_source_relationship = sa.Table(
     'users_draw_sources', meta,
     sa.Column('user_id', UUID(as_uuid=True), sa.ForeignKey('users.id'), primary_key=True),
-    sa.Column('source_id', UUID(as_uuid=True), sa.ForeignKey('draw_sources.id'), primary_key=True),
+    sa.Column('draw_source_id', UUID(as_uuid=True), sa.ForeignKey('draw_sources.id'), primary_key=True),
 )
 
 user = sa.Table(

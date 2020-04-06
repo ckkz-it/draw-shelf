@@ -29,7 +29,7 @@ class ModelServiceMixin:
 
     async def _get_one(
             self,
-            where: typing.Union[BinaryExpression, BooleanClauseList] = None
+            where: typing.Union[BinaryExpression, BooleanClauseList] = None,
     ) -> typing.Optional[RowProxy]:
         async with self.engine.acquire() as conn:
             cursor: Cursor = await conn.execute(self.db_table.select(whereclause=where))
@@ -43,8 +43,9 @@ class ModelServiceMixin:
             where: typing.Union[BinaryExpression, BooleanClauseList] = None,
             limit: int = None
     ) -> typing.List[RowProxy]:
+        return await self._get_all_custom(self.db_table.select(whereclause=where, limit=limit))
+
+    async def _get_all_custom(self, query: typing.Any) -> typing.List[RowProxy]:
         async with self.engine.acquire() as conn:
-            cursor: Cursor = await conn.execute(self.db_table.select(whereclause=where))
-            if limit:
-                return await cursor.fetchmany(limit)
+            cursor: Cursor = await conn.execute(query)
             return await cursor.fetchall()

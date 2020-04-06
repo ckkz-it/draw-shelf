@@ -60,7 +60,7 @@ async def refresh_token(request: web.Request) -> web.Response:
 
 
 async def get_draw_sources(request: web.Request) -> web.Response:
-    data = await DrawSourceService(engine=request.app['db']).get_all()
+    data = await UserService(engine=request.app['db']).get_draw_sources('52536cad-8e57-4253-9be4-ea65321d130c')
     return web.json_response(data)
 
 
