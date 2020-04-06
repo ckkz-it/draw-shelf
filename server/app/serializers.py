@@ -31,13 +31,17 @@ class LoginSchema(Schema):
 class DrawSourceSchema(Schema):
     id = fields.UUID()
     type = EnumField(enum=db.DrawSourceType)
-    company = fields.Str()
+    name = fields.Str()
+    company_id = fields.UUID()
     color = fields.Str()
     code = fields.Str()
+    color_category = fields.Str()
 
 
 class DrawSourceCreateSchema(Schema):
     type = EnumField(enum=db.DrawSourceType, required=True)
-    company = fields.Str(required=True)
+    name = fields.Str(required=True)
+    company_id = fields.Str(required=True)
     color = fields.Str(required=True)
     code = fields.Str(required=True)
+    color_category = fields.Str()

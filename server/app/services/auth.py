@@ -2,7 +2,7 @@ import datetime
 
 import jwt
 
-from settings import config
+from app.settings import config
 
 
 class AuthService:
@@ -11,16 +11,16 @@ class AuthService:
     @classmethod
     def create_access_token(cls, user: dict) -> str:
         payload = {
-            **user,
+            'user': user,
             'iat': datetime.datetime.utcnow(),
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=config['jwt']['access_exp']),
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=cls.jwt_cfg['access_exp']),
         }
         return jwt.encode(payload, cls.jwt_cfg['secret'], cls.jwt_cfg['algorithm']).decode('utf-8')
 
     @classmethod
     def create_refresh_token(cls, user: dict) -> str:
         payload = {
-            **user,
+            'user': user,
             'iat': datetime.datetime.utcnow(),
             'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=cls.jwt_cfg['refresh_exp']),
         }

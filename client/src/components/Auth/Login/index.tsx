@@ -6,7 +6,7 @@ import { Button, Form, InputOnChangeData } from 'semantic-ui-react';
 import AuthWrapper from '../AuthWrapper';
 import { useStores } from '../../../hooks/use-stores';
 import { StyledButtonWrapper } from '../styles';
-import { AuthHeader } from '../AuthHeader';
+import AuthHeader from '../AuthHeader';
 
 const Login: React.FC = observer(() => {
   const [form, setForm] = useState({ email: '', password: '' });

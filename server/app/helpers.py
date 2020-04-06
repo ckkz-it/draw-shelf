@@ -33,7 +33,7 @@ class EnumField(fields.Str):
     def _serialize(self, value, attr, obj, **kwargs):
         if value is None:
             return None
-        return value.value
+        return value.value[0]
 
     def _deserialize(self, value, attr, data, **kwargs):
         if not isinstance(value, str):

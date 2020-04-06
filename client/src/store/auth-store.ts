@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 import { jwtSecret, storagePrefix } from '../config';
 import { AuthApi } from '../apis/auth-api';
-import { ISignUp, IUser } from '../interfaces/auth';
+import { IJWTPayload, ISignUp } from '../interfaces/auth';
 import { UserStore } from './user-store';
 
 export class AuthStore {
@@ -22,7 +22,7 @@ export class AuthStore {
     if (this.accessToken) {
       jwt.verify(this.accessToken, jwtSecret, { algorithms: ['HS256'] }, (err, decoded) => {
         if (!err) {
-          this.userStore.setUser(decoded as IUser);
+          this.userStore.setUser((decoded as IJWTPayload).user);
         }
       });
     }
@@ -56,7 +56,7 @@ export class AuthStore {
     const data = await this.api.login(email, password);
     this.setAccessToken(data.access);
     this.setRefreshToken(data.refresh);
-    this.userStore.setUser(jwt.decode(data.access) as IUser);
+    this.userStore.setUser((jwt.decode(data.access) as IJWTPayload).user);
   }
 
   @action async signUp(signUpData: ISignUp) {

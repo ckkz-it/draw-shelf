@@ -7,7 +7,7 @@ import AuthWrapper from '../AuthWrapper';
 import { useStores } from '../../../hooks/use-stores';
 import { ISignUp } from '../../../interfaces/auth';
 import { StyledButtonWrapper } from '../styles';
-import { AuthHeader } from '../AuthHeader';
+import AuthHeader from '../AuthHeader';
 
 const Register: React.FC = observer(() => {
   const [form, setForm] = useState<ISignUp>({ name: '', phone: '', email: '', password: '' });
