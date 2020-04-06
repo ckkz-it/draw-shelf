@@ -6,6 +6,7 @@ import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import ProtectedRoute from './components/shared/ProtectedRoute';
 import Shelf from './components/Shelf';
+import PageWrapper from './components/PageWrapper';
 
 const App: React.FC = observer(() => {
   return (
@@ -18,9 +19,12 @@ const App: React.FC = observer(() => {
         <Route exact path="/sign-up">
           <Register />
         </Route>
-        <ProtectedRoute exact path="/shelf">
-          <Shelf />
-        </ProtectedRoute>
+
+        <PageWrapper>
+          <ProtectedRoute exact path="/shelf">
+            <Shelf />
+          </ProtectedRoute>
+        </PageWrapper>
       </Switch>
     </Router>
   );

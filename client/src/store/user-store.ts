@@ -5,7 +5,7 @@ import { IUser } from '../interfaces/auth';
 export class UserStore {
   @observable public user: IUser | null = null;
 
-  @action setUser(user: IUser) {
+  @action setUser(user: IUser | null) {
     this.user = user;
   }
 }

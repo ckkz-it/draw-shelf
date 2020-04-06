@@ -1,9 +1,10 @@
 import React from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
+import { observer } from 'mobx-react-lite';
 
 import { useStores } from '../../hooks/user-stores';
 
-const ProtectedRoute: React.FC<RouteProps> = ({ children, ...rest }) => {
+const ProtectedRoute: React.FC<RouteProps> = observer(({ children, ...rest }) => {
   const { authStore } = useStores();
 
   if (!authStore.isAuthenticated) {
@@ -11,6 +12,6 @@ const ProtectedRoute: React.FC<RouteProps> = ({ children, ...rest }) => {
   }
 
   return <Route {...rest}>{children}</Route>;
-};
+});
 
 export default ProtectedRoute;

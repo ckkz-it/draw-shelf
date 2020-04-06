@@ -62,4 +62,10 @@ export class AuthStore {
   @action async signUp(signUpData: ISignUp) {
     await this.api.signUp(signUpData);
   }
+
+  @action logout() {
+    this.setAccessToken(null);
+    this.setRefreshToken(null);
+    this.userStore.setUser(null);
+  }
 }
