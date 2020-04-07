@@ -30,10 +30,10 @@ class UserService(ModelServiceMixin):
     async def get_draw_sources(self, user_id: str):
         try:
             query = select([db.draw_source, db.company], use_labels=True) \
-                .select_from(db.draw_source.join(db.company))
+                .select_from(db.draw_source.join(db.company).join(db.user_draw_source_relationship)) \
+                .where(db.user_draw_source_relationship.c.user_id == user_id)
             result = await self._get_all_custom(query)
-            name_mapping = dict(companies='company')
-            data = DBDataParser(result, 'draw_sources', many=True, name_mapping=name_mapping).parse()
+            data = DBDataParser(result, 'draw_sources', many=True).parse()
             return DrawSourceSchema(many=True).dump(data)
         except Exception as e:
             raise e

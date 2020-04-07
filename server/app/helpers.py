@@ -49,29 +49,29 @@ class DBDataParser:
     def __init__(
             self,
             raw_data: typing.Union[RowProxy, typing.List[RowProxy]],
-            root_dict_table_name: str,
+            root_table_name: str,
             *,
             many: bool = False,
-            name_mapping: dict = None
+            table_name_mapping: dict = None
     ):
         self.raw_data = raw_data
-        self.root_dict_table_name = root_dict_table_name
+        self.root_table_name = root_table_name
         self.many = many
-        self.name_mapping = name_mapping
+        self.table_name_mapping = table_name_mapping
 
     def _extract_table_name_and_dict_key(self, key: str) -> typing.Tuple[str, str]:
         for tbl in self.all_tables:
             if key.startswith(tbl):
-                key = key.partition(tbl + '_')[-1]
-                if self.name_mapping and tbl in self.name_mapping:
-                    return self.name_mapping[tbl], key
+                key = key.split(tbl + '_')[-1]
+                if self.table_name_mapping and tbl in self.table_name_mapping:
+                    return self.table_name_mapping[tbl], key
                 return tbl, key
 
     def parse_item(self, item: dict) -> defaultdict:
         el = defaultdict(dict)
         for key, value in item.items():
             table_name, dict_key = self._extract_table_name_and_dict_key(key)
-            if table_name == self.root_dict_table_name:
+            if table_name == self.root_table_name:
                 el[dict_key] = value
             else:
                 el[table_name][dict_key] = value

@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields, post_load
+from marshmallow import Schema, fields, post_load, SchemaOpts
 
 from app import db
 from app.helpers import hash_password, EnumField
@@ -10,6 +10,9 @@ class UserSchema(Schema):
     phone = fields.Str()
     email = fields.Email()
     created_at = fields.DateTime()
+
+    class Meta:
+        ordered = True
 
 
 class RegisterSchema(Schema):
@@ -32,15 +35,21 @@ class CompanySchema(Schema):
     id = fields.UUID()
     name = fields.Str()
 
+    class Meta:
+        ordered = True
+
 
 class DrawSourceSchema(Schema):
     id = fields.UUID()
     type = EnumField(enum=db.DrawSourceType)
     name = fields.Str()
-    company = fields.Nested(CompanySchema)
+    companies = fields.Nested(CompanySchema, data_key='company')
     color = fields.Str()
     code = fields.Str()
     color_category = fields.Str()
+
+    class Meta:
+        ordered = True
 
 
 class DrawSourceCreateSchema(Schema):
