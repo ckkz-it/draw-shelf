@@ -5,14 +5,23 @@ import { toSnakeCase } from './snake-case';
 import { camelizeKeys } from './camel-case';
 import { storageService } from '../services/storage-service';
 
-const axiosInstance = axios.create({ baseURL });
 const getAccessToken = () => storageService.getItem('access');
+
+const axiosInstance = axios.create({ baseURL });
+
 axiosInstance.interceptors.request.use(
-  (config) => ({
-    ...config,
-    headers: { ...config.headers, Authorization: `Bearer ${getAccessToken()}` },
-    data: config.data ? toSnakeCase(config.data) : config.data,
-  }),
+  (config) => {
+    let headers = config.headers;
+    const token = getAccessToken();
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+    return {
+      ...config,
+      data: config.data ? toSnakeCase(config.data) : config.data,
+      headers,
+    };
+  },
   (error) => {
     return Promise.reject(error);
   },

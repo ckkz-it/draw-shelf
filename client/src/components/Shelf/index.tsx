@@ -1,18 +1,19 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { observer } from 'mobx-react-lite';
 
 import { useStores } from '../../hooks/use-stores';
+import { useFetch } from '../../hooks/use-fetch';
 
 const Shelf: React.FC = observer(() => {
   const { drawSourceStore } = useStores();
 
-  useEffect(() => {
-    if (!drawSourceStore.drawSources) {
-      drawSourceStore.fetchAll();
-    }
-  });
+  const { error, fetched } = useFetch<void>(drawSourceStore.fetchAll);
 
-  if (!drawSourceStore.drawSources) {
+  if (error) {
+    return <div>{error?.message}</div>;
+  }
+
+  if (!fetched) {
     return <div>Loading...</div>;
   }
 

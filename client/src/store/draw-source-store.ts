@@ -8,12 +8,12 @@ export class DrawSourceStore {
 
   constructor(private api: DrawSourceApi) {}
 
-  @action setDrawSources(ds: IDrawSource[]) {
+  @action setDrawSources = (ds: IDrawSource[]) => {
     this.drawSources = ds;
-  }
+  };
 
-  @action async fetchAll() {
+  @action fetchAll = async () => {
     const ds = await this.api.getAll();
     this.setDrawSources(ds);
-  }
+  };
 }
