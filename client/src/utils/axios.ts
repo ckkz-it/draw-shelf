@@ -1,5 +1,30 @@
 import axios from 'axios';
 
-import { apiUrl } from '../config';
+import { baseURL, storagePrefix } from '../config';
+import { toSnakeCase } from './snake-case';
+import { camelizeKeys } from './camel-case';
 
-export default axios.create({ baseURL: apiUrl });
+const axiosInstance = axios.create({ baseURL });
+const accessToken = window.localStorage.getItem(storagePrefix + 'access');
+axiosInstance.interceptors.request.use(
+  (config) => ({
+    ...config,
+    headers: { ...config.headers, Authorization: `Bearer ${accessToken}` },
+    data: config.data ? toSnakeCase(config.data) : config.data,
+  }),
+  (error) => {
+    return Promise.reject(error);
+  },
+);
+
+axiosInstance.interceptors.response.use(
+  (response) => {
+    response.data = camelizeKeys(response.data);
+    return response;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
+
+export default axiosInstance;
