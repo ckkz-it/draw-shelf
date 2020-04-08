@@ -1,6 +1,6 @@
 import { storagePrefix } from '../config';
 
-export class StorageService implements Storage {
+class StorageService implements Storage {
   private storage = window.localStorage;
   private prefix = storagePrefix || '';
 
@@ -32,3 +32,5 @@ export class StorageService implements Storage {
     return this.storage.key(index);
   }
 }
+
+export const storageService = new StorageService();
