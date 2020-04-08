@@ -19,7 +19,9 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   (response) => {
-    response.data = camelizeKeys(response.data);
+    if (response.data) {
+      response.data = camelizeKeys(response.data);
+    }
     return response;
   },
   (error) => {
