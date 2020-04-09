@@ -14,3 +14,9 @@ export interface IDrawSource {
   colorCategory: string;
   company: ICompany;
 }
+
+export type DrawSourceTypeItem = {
+  type: DrawSourceType;
+  label: string;
+  gradient: string;
+};

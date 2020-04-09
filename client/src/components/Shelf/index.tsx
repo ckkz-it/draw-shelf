@@ -1,18 +1,22 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { Card } from 'semantic-ui-react';
 
+import { DrawSourceType as DrawSourceTypeEnum } from '../../interfaces/draw-source';
+import { drawSourceTypes } from '../../constants';
 import DrawSourceType from '../shared/DrawSourceType';
 
 const Shelf: React.FC = observer(() => {
+  const history = useHistory();
+
+  const onChooseType = (type: DrawSourceTypeEnum) => history.push(type);
+
   return (
     <Card.Group itemsPerRow={2}>
-      <DrawSourceType gradient="linear-gradient(150deg, rgba(84,202,204,1) 0%, rgba(255,234,188,1) 100%)">
-        Markers
-      </DrawSourceType>
-      <DrawSourceType gradient="linear-gradient(150deg, rgba(255,189,197,1) 0%, rgba(255,217,135,1) 100%)">
-        Paints
-      </DrawSourceType>
+      {drawSourceTypes.map((item) => (
+        <DrawSourceType key={item.type} onChoose={onChooseType} item={item} />
+      ))}
     </Card.Group>
   );
 });
