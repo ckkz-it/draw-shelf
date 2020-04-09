@@ -1,28 +1,19 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
+import { Card } from 'semantic-ui-react';
 
-import { useStores } from '../../hooks/use-stores';
-import { useFetch } from '../../hooks/use-fetch';
+import DrawSourceType from '../shared/DrawSourceType';
 
 const Shelf: React.FC = observer(() => {
-  const { drawSourceStore } = useStores();
-
-  const { error, fetched } = useFetch<void>(drawSourceStore.fetchAll);
-
-  if (error) {
-    return <div>{error?.message}</div>;
-  }
-
-  if (!fetched) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <div>
-      {drawSourceStore.drawSources.map((item) => (
-        <pre key={item.id}>{JSON.stringify(item, null, 2)}</pre>
-      ))}
-    </div>
+    <Card.Group itemsPerRow={2}>
+      <DrawSourceType gradient="linear-gradient(150deg, rgba(84,202,204,1) 0%, rgba(255,234,188,1) 100%)">
+        Markers
+      </DrawSourceType>
+      <DrawSourceType gradient="linear-gradient(150deg, rgba(255,189,197,1) 0%, rgba(255,217,135,1) 100%)">
+        Paints
+      </DrawSourceType>
+    </Card.Group>
   );
 });
 
