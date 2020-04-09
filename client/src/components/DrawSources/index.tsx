@@ -30,7 +30,7 @@ const DrawSources: React.FC = observer(() => {
   return (
     <div>
       {drawSources.map((ds) => (
-        <DSComponent key={ds.type} drawSource={ds} />
+        <DSComponent key={ds.id} drawSource={ds} />
       ))}
     </div>
   );
