@@ -4,13 +4,14 @@ import { Card } from 'semantic-ui-react';
 type StyleCardProps = { gradient: string };
 
 export const StyledCard = styled(Card)<StyleCardProps>`
-  min-height: 200px !important;
-  font-size: 4rem !important;
-  color: #fff;
-  line-height: 1;
-  cursor: pointer;
-  background: ${(props) => props.gradient} !important;
-
+  &&&&& {
+    min-height: 200px;
+    font-size: 4rem;
+    color: #fff;
+    line-height: 1;
+    cursor: pointer;
+    background: ${(props) => props.gradient};
+  }
 `;
 
 export const StyledCardContent = styled.div`
