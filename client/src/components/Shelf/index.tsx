@@ -10,7 +10,7 @@ import DrawSourceType from '../shared/DrawSourceType';
 const Shelf: React.FC = observer(() => {
   const history = useHistory();
 
-  const onChooseType = (type: DrawSourceTypeEnum) => history.push(type);
+  const onChooseType = (type: DrawSourceTypeEnum) => history.push('/shelf/' + type);
 
   return (
     <Card.Group itemsPerRow={2}>

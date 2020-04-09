@@ -8,6 +8,7 @@ import ProtectedRoute from './components/shared/ProtectedRoute';
 import Shelf from './components/Shelf';
 import PageWrapper from './components/PageWrapper';
 import Settings from './components/Settings';
+import DrawSources from './components/DrawSources';
 
 const App: React.FC = observer(() => {
   return (
@@ -24,6 +25,9 @@ const App: React.FC = observer(() => {
         <PageWrapper>
           <ProtectedRoute exact path="/shelf">
             <Shelf />
+          </ProtectedRoute>
+          <ProtectedRoute exact path="/shelf/:type">
+            <DrawSources />
           </ProtectedRoute>
           <ProtectedRoute exact path="/settings">
             <Settings />
