@@ -3,7 +3,7 @@ type RGB = { r: number; g: number; b: number };
 /*
   https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
  */
-const hexToRgb = (hex: string): RGB => {
+export const hexToRgb = (hex: string): RGB => {
   // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
   const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
   hex = hex.replace(shorthandRegex, (_, r, g, b) => {
