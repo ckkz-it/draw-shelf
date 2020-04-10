@@ -41,10 +41,21 @@ async def close_pg(app: Application) -> None:
 
 meta = sa.MetaData()
 
+
+class DrawSourceResource(enum.Enum):
+    empty = 'empty'
+    low = 'low'
+    half = 'half'
+    full = 'full'
+
+
 user_draw_source_relationship = sa.Table(
     'users_draw_sources', meta,
     sa.Column('user_id', UUID(as_uuid=True), sa.ForeignKey('users.id'), primary_key=True),
     sa.Column('draw_source_id', UUID(as_uuid=True), sa.ForeignKey('draw_sources.id'), primary_key=True),
+    sa.Column('resource', sa.Enum(DrawSourceResource, name='draw_source_resource'), nullable=True,
+              default=DrawSourceResource.full),
+    sa.Column('quantity', sa.Integer, nullable=False, default=1),
 )
 
 user = sa.Table(
@@ -72,7 +83,7 @@ class DrawSourceType(enum.Enum):
 draw_source = sa.Table(
     'draw_sources', meta,
     sa.Column('id', UUID(as_uuid=True), primary_key=True, default=uuid4),
-    sa.Column('type', sa.Enum(DrawSourceType), nullable=False),
+    sa.Column('type', sa.Enum(DrawSourceType, name='draw_source_type'), nullable=False),
     sa.Column('name', sa.Text, nullable=False),
     sa.Column('color', sa.Text, nullable=False),
     sa.Column('code', sa.Text, nullable=False),

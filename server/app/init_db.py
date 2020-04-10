@@ -11,6 +11,7 @@ markers_file = fixtures_dir / 'markers.json'
 
 
 def create_dbs(eng: Engine):
+    db.meta.drop_all(bind=eng)
     db.meta.create_all(bind=eng)
 
 
