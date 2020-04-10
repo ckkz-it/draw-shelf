@@ -60,7 +60,8 @@ async def refresh_token(request: web.Request) -> web.Response:
 
 
 async def get_draw_sources(request: web.Request) -> web.Response:
-    data = await UserService(engine=request.app['db']).get_draw_sources('52536cad-8e57-4253-9be4-ea65321d130c')
+    user = request['token_payload']['user']
+    data = await UserService(engine=request.app['db']).get_draw_sources(user['id'])
     return web.json_response(data)
 
 
