@@ -80,9 +80,5 @@ class DBDataParser:
     def parse(self, *, many: bool = None) -> typing.Union[typing.List[dict], dict]:
         many = self.many if many is None else many
         if many:
-            data = []
-            for row in self.raw_data:
-                data.append(self.parse_item(dict(row)))
-            return data
-
+            return [self.parse_item(dict(row)) for row in self.raw_data]
         return self.parse_item(dict(self.raw_data))

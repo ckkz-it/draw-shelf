@@ -1,8 +1,7 @@
 import typing
 
-from aiopg import Cursor
 from aiopg.sa import Engine
-from aiopg.sa.result import RowProxy
+from aiopg.sa.result import RowProxy, ResultProxy
 from sqlalchemy.sql.elements import BinaryExpression, BooleanClauseList
 
 
@@ -24,7 +23,7 @@ class ModelServiceMixin:
             query = self.db_table.insert().values(**data)
             if return_created_obj:
                 query = query.returning(*self.db.table.c)
-            cursor: Cursor = await conn.execute(query)
+            cursor: ResultProxy = await conn.execute(query)
             return await cursor.fetchone()
 
     async def _get_one(
@@ -32,7 +31,7 @@ class ModelServiceMixin:
             where: typing.Union[BinaryExpression, BooleanClauseList] = None,
     ) -> typing.Optional[RowProxy]:
         async with self.engine.acquire() as conn:
-            cursor: Cursor = await conn.execute(self.db_table.select(whereclause=where))
+            cursor: ResultProxy = await conn.execute(self.db_table.select(whereclause=where))
             result: RowProxy = await cursor.fetchone()
             return result
 
@@ -45,5 +44,5 @@ class ModelServiceMixin:
 
     async def _get_all_custom(self, query: typing.Any) -> typing.List[RowProxy]:
         async with self.engine.acquire() as conn:
-            cursor: Cursor = await conn.execute(query)
+            cursor: ResultProxy = await conn.execute(query)
             return await cursor.fetchall()
