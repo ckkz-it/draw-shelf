@@ -1,5 +1,6 @@
 import json
 import pathlib
+from argparse import ArgumentParser
 
 import sqlalchemy as sa
 
@@ -48,6 +49,16 @@ def create_user(eng: sa.engine.Engine):
 
 
 if __name__ == '__main__':
+    arg_parser = ArgumentParser()
+    arg_parser.add_argument('--recreate', '-rc', action='store_true')
+    arg_parser.add_argument('--draw_sources', '-ds', action='store_true')
+    arg_parser.add_argument('--user', '-u', action='store_true')
+    args = arg_parser.parse_args()
+
     engine = db.get_sync_engine()
-    # recreate_dbs(engine)
-    create_ds_from_fixtures(markers_file, engine)
+    if args.recreate:
+        recreate_dbs(engine)
+    if args.draw_sources:
+        create_ds_from_fixtures(markers_file, engine)
+    if args.user:
+        create_user(engine)
