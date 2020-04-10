@@ -19,13 +19,13 @@ class ModelServiceMixin:
         assert hasattr(self, 'db_table'), '`db_table` attribute has to be specified on service'
         self.engine = engine
 
-    async def _create(self, data: dict, *, return_created_obj: bool = False) -> typing.Optional[dict]:
+    async def _create(self, data: dict, *, return_created_obj: bool = False) -> typing.Optional[RowProxy]:
         async with self.engine.acquire() as conn:
-            await conn.execute(self.db_table.insert().values(**data))
+            query = self.db_table.insert().values(**data)
             if return_created_obj:
-                cursor: Cursor = await conn.execute(self.db_table.select().order_by(self.db_table.c.id))
-                return await cursor.fetchone()
-            return None
+                query = query.returning(*self.db.table.c)
+            cursor: Cursor = await conn.execute(query)
+            return await cursor.fetchone()
 
     async def _get_one(
             self,
@@ -34,9 +34,7 @@ class ModelServiceMixin:
         async with self.engine.acquire() as conn:
             cursor: Cursor = await conn.execute(self.db_table.select(whereclause=where))
             result: RowProxy = await cursor.fetchone()
-            if result:
-                return result
-            return None
+            return result
 
     async def _get_all(
             self,
