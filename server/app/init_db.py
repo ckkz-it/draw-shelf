@@ -41,8 +41,8 @@ def create_ds_from_fixtures(eng: sa.engine.Engine, file) -> sa.engine.ResultProx
     return created_ds
 
 
-def assign_ds_to_user(eng: sa.engine.Engine, created_ds: sa.engine.ResultProxy, u_id):
-    relations_to_insert = [{'user_id': u_id, 'draw_source_id': ds.id} for ds in created_ds]
+def assign_ds_to_user(eng: sa.engine.Engine, drw_srcs: sa.engine.ResultProxy, u_id):
+    relations_to_insert = [{'user_id': u_id, 'draw_source_id': ds.id} for ds in drw_srcs]
     eng.execute(db.user_draw_source_relationship.insert().values(relations_to_insert))
 
 

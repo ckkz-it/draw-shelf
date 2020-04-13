@@ -1,18 +1,23 @@
 import typing
+
+from aiopg.sa import Engine
 from sqlalchemy.sql.elements import BinaryExpression, BooleanClauseList
 
 from app import db
 from app.serializers import DrawSourceSchema
-from app.services.mixins import ModelServiceMixin
+from app.services.database import DatabaseService
 
 
-class DrawSourceService(ModelServiceMixin):
-    db_table = db.draw_source
+class DrawSourceService:
     schema = DrawSourceSchema
+    db_service: DatabaseService = None
+
+    def __init__(self, engine: Engine):
+        self.db_service = DatabaseService(engine, db.draw_source)
 
     async def create(self, ds_data: dict) -> tuple:
         try:
-            draw_source = await self._create(ds_data, return_created_obj=True)
+            draw_source = await self.db_service.create(ds_data, return_created_obj=True)
         except Exception as e:
             return None, e
         draw_source = self.schema().dump(draw_source)
@@ -23,5 +28,5 @@ class DrawSourceService(ModelServiceMixin):
             where: typing.Union[BinaryExpression, BooleanClauseList] = None,
             limit: int = None
     ):
-        results = await self._get_all(where, limit)
-        return DrawSourceSchema(many=True).dump(results)
+        results = await self.db_service.get_all(where, limit)
+        return self.schema(many=True).dump(results)
