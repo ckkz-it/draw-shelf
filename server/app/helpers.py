@@ -33,7 +33,7 @@ class EnumField(fields.Str):
     def _serialize(self, value, attr, obj, **kwargs):
         if value is None:
             return None
-        return value.value[0]
+        return value.value
 
     def _deserialize(self, value, attr, data, **kwargs):
         if not isinstance(value, str):
@@ -49,13 +49,13 @@ class DBDataParser:
     def __init__(
             self,
             raw_data: typing.Union[RowProxy, typing.List[RowProxy]],
-            root_table_name: str,
+            root_table_names: typing.Sequence[str],
             *,
             many: bool = False,
             table_name_mapping: dict = None
     ):
         self.raw_data = raw_data
-        self.root_table_name = root_table_name
+        self.root_table_names = root_table_names
         self.many = many
         self.table_name_mapping = table_name_mapping
 
@@ -71,7 +71,7 @@ class DBDataParser:
         el = defaultdict(dict)
         for key, value in item.items():
             table_name, dict_key = self._extract_table_name_and_dict_key(key)
-            if table_name == self.root_table_name:
+            if table_name in self.root_table_names:
                 el[dict_key] = value
             else:
                 el[table_name][dict_key] = value

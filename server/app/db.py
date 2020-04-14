@@ -76,8 +76,8 @@ company = sa.Table(
 
 
 class DrawSourceType(enum.Enum):
-    marker = 'marker',
-    paints = 'paints',
+    marker = 'marker'
+    paints = 'paints'
 
 
 draw_source = sa.Table(

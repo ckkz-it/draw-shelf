@@ -3,7 +3,7 @@ from sqlalchemy import select
 
 from app import db
 from app.helpers import verify_password, DBDataParser
-from app.serializers import UserSchema, DrawSourceSchema
+from app.serializers import UserSchema, DrawSourceForUserSchema
 from app.services.database import DatabaseService
 
 
@@ -33,11 +33,13 @@ class UserService:
 
     async def get_draw_sources(self, user_id: str):
         try:
-            query = select([db.draw_source, db.company], use_labels=True) \
-                .select_from(db.draw_source.join(db.company).join(db.user_draw_source_relationship)) \
+            query = select([db.user_draw_source_relationship.c.resource,
+                            db.user_draw_source_relationship.c.quantity,
+                            db.draw_source, db.company], use_labels=True) \
+                .select_from(db.user_draw_source_relationship.join(db.draw_source.join(db.company))) \
                 .where(db.user_draw_source_relationship.c.user_id == user_id)
             result = await self.db_service.get_all_custom(query)
-            data = DBDataParser(result, 'draw_sources', many=True).parse()
-            return DrawSourceSchema(many=True).dump(data)
+            data = DBDataParser(result, ['draw_sources', 'users_draw_sources'], many=True).parse()
+            return DrawSourceForUserSchema(many=True).dump(data)
         except Exception as e:
             raise e

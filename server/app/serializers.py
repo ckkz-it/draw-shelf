@@ -52,6 +52,11 @@ class DrawSourceSchema(Schema):
         ordered = True
 
 
+class DrawSourceForUserSchema(DrawSourceSchema):
+    quantity = fields.Int()
+    resource = EnumField(enum=db.DrawSourceResource)
+
+
 class DrawSourceCreateSchema(Schema):
     type = EnumField(enum=db.DrawSourceType, required=True)
     name = fields.Str(required=True)
@@ -59,3 +64,5 @@ class DrawSourceCreateSchema(Schema):
     color = fields.Str(required=True)
     code = fields.Str(required=True)
     color_category = fields.Str()
+    quantity = fields.Int()
+    resource = EnumField(enum=db.DrawSourceResource)
