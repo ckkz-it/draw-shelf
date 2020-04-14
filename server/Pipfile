@@ -1,0 +1,19 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+aiohttp = {extras = ["speedups"],version = "*"}
+aiopg = "*"
+aiohttp-cors = "*"
+aiohttp-jwt = "*"
+sqlalchemy = "*"
+marshmallow = "*"
+pyyaml = "*"
+py-bcrypt = "*"
+
+[requires]
+python_version = "3.8"
