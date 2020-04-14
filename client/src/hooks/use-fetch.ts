@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 type useFetchState<T = any> = { result: T; error: any; loading: boolean; fetched: boolean };
 
-export const useFetch = <T>(fetchFn: (...args: any) => Promise<T>) => {
+export const useFetch = <T>(fetchFn: (...args: any) => Promise<T>, immediate = true) => {
   const [state, setState] = useState<useFetchState<T>>({
     result: null,
     error: null,
@@ -24,11 +24,13 @@ export const useFetch = <T>(fetchFn: (...args: any) => Promise<T>) => {
     }
   }, [fetchFn]);
 
+  const makeRequest = () => fetchRequest();
+
   useEffect(() => {
-    if (!state.fetched) {
+    if (!state.fetched && immediate) {
       fetchRequest();
     }
-  }, [state.fetched, fetchRequest]);
+  }, [state.fetched, fetchRequest, immediate]);
 
-  return state;
+  return { ...state, makeRequest };
 };
