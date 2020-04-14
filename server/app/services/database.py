@@ -23,8 +23,8 @@ class DatabaseService:
             query = self.db_table.insert().values(**data)
             if return_created_obj:
                 query = query.returning(*self.db_table.c)
-            cursor: ResultProxy = await conn.execute(query)
-            return await cursor.fetchone()
+            result: ResultProxy = await conn.execute(query)
+            return await result.fetchone()
 
     async def get_one(
             self,
@@ -45,3 +45,16 @@ class DatabaseService:
         async with self.engine.acquire() as conn:
             result: ResultProxy = await conn.execute(query)
             return await result.fetchall()
+
+    async def update(
+            self,
+            data: dict,
+            where: typing.Union[BinaryExpression, BooleanClauseList] = None,
+    ) -> ResultProxy:
+        async with self.engine.acquire() as conn:
+            query = self.db_table.update(where).values(**data)
+            return await conn.execute(query)
+
+    async def execute(self, query: typing.Any) -> ResultProxy:
+        async with self.engine.acquire() as conn:
+            return await conn.execute(query)

@@ -4,7 +4,7 @@ import jwt
 from aiohttp import web
 from marshmallow import ValidationError
 
-from app.serializers import RegisterSchema, LoginSchema, DrawSourceCreateSchema
+from app.serializers import RegisterSchema, LoginSchema, DrawSourceCreateSchema, DrawSourceForUserSchema
 from app.services.auth import AuthService
 from app.services.draw_source import DrawSourceService
 from app.services.user import UserService
@@ -77,3 +77,22 @@ async def create_draw_source(request: web.Request) -> web.Response:
         return web.Response(text=str(error), status=500)
 
     return web.json_response(draw_source)
+
+
+async def update_draw_source(request: web.Request) -> web.Response:
+    ds_id = request.match_info.get('id')
+    if not ds_id:
+        return web.Response(status=404)
+
+    schema = DrawSourceForUserSchema()
+    data = await request.text()
+    ds_data = schema.loads(data)
+
+    service = DrawSourceService(engine=request.app['db'])
+    ds = await service.get_by_id(ds_id)
+    if not ds:
+        return web.Response(status=404)
+
+    await service.update(ds_id, ds_data)
+
+    return web.json_response(ds_data, dumps=schema.dumps)

@@ -66,3 +66,10 @@ class DrawSourceCreateSchema(Schema):
     color_category = fields.Str()
     quantity = fields.Int()
     resource = EnumField(enum=db.DrawSourceResource)
+
+
+class UserDrawSourceRelationshipSchema(Schema):
+    draw_source_id = fields.UUID()
+    user_id = fields.UUID()
+    quantity = fields.Int()
+    resource = EnumField(enum=db.DrawSourceResource)
