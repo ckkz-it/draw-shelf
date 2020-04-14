@@ -16,4 +16,12 @@ export class DrawSourceStore {
     const ds = await this.api.getAll();
     this.setDrawSources(ds);
   };
+
+  update = async (id: string, dsData: IDrawSource) => {
+    const updatedDs = await this.api.update(id, dsData);
+    const updatedDrawSources = this.drawSources.map((ds) =>
+      ds.id === id ? { ...ds, ...updatedDs } : ds,
+    );
+    this.setDrawSources(updatedDrawSources);
+  };
 }

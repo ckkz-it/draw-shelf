@@ -6,4 +6,9 @@ export class DrawSourceApi {
     const { data } = await axios.get('/draw_sources');
     return data;
   }
+
+  async update(id: string, dsData: IDrawSource) {
+    const { data } = await axios.put(`/draw_sources/${id}`, dsData);
+    return data;
+  }
 }

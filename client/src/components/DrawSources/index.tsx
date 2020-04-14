@@ -9,8 +9,8 @@ import { DrawSourceType } from '../../interfaces/draw-source';
 import { getComponentForDrawSource } from '../../helpers/get-component-for-ds';
 
 const DrawSources: React.FC = observer(() => {
-  const { type } = useParams<{ type: DrawSourceType }>();
-  if (!type || !(type in DrawSourceType)) {
+  const params = useParams<{ type: DrawSourceType }>();
+  if (!params.type || !(params.type in DrawSourceType)) {
     return <Redirect to="/shelf" />;
   }
   const { drawSourceStore } = useStores();
@@ -20,15 +20,15 @@ const DrawSources: React.FC = observer(() => {
     return <div>Loading...</div>;
   }
 
-  const drawSources = drawSourceStore.drawSources.filter((ds) => ds.type === type);
+  const drawSources = drawSourceStore.drawSources.filter((ds) => ds.type === params.type);
   if (drawSources.length === 0) {
-    return <Header as="h1">No {type + 's'} found</Header>;
+    return <Header as="h1">No {params.type + 's'} found</Header>;
   }
 
-  const DSComponent = getComponentForDrawSource(type as DrawSourceType);
+  const DSComponent = getComponentForDrawSource(params.type as DrawSourceType);
 
   return (
-    <div>
+    <div style={{ display: 'flex', justifyContent: 'space-around' }}>
       {drawSources.map((ds) => (
         <DSComponent key={ds.id} drawSource={ds} />
       ))}
