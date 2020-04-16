@@ -12,7 +12,7 @@ export class DrawSourceStore {
     this.drawSources = ds;
   };
 
-  @action fetchAll = async () => {
+  fetchAll = async () => {
     const ds = await this.api.getAll();
     this.setDrawSources(ds);
   };

@@ -14,7 +14,7 @@ const DrawSources: React.FC = observer(() => {
     return <Redirect to="/shelf" />;
   }
   const { drawSourceStore } = useStores();
-  const { fetched } = useFetch(drawSourceStore.fetchAll);
+  const { fetched } = useFetch({ fetchFn: drawSourceStore.fetchAll });
 
   if (!fetched) {
     return <div>Loading...</div>;

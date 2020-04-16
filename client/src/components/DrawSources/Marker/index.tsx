@@ -5,21 +5,23 @@ import { StyledMarker } from './styles';
 import { getTextColorBasedOnBg } from '../../../helpers/get-text-color-based-on-bg';
 import MarkerModal from './Modal';
 import { useStores } from '../../../hooks/use-stores';
+import { useFetch } from '../../../hooks/use-fetch';
 
 type Props = { drawSource: IDrawSource };
 
 const Marker: React.FC<Props> = ({ drawSource }) => {
   const [modalOpened, setModalOpened] = useState(false);
   const [modalDimmed, setModalDimmed] = useState(false);
-  const [loadingUpdateRequest, setLoadingUpdateRequest] = useState(false);
 
   const { drawSourceStore } = useStores();
+  const { makeRequest, loading } = useFetch<void>({
+    fetchFn: drawSourceStore.update,
+    immediate: false,
+  });
 
   const onSaveMarker = async (quantity: number, resource: DrawSourceResource) => {
     setModalDimmed(true);
-    setLoadingUpdateRequest(true);
-    await drawSourceStore.update(drawSource.id, { ...drawSource, quantity, resource });
-    setLoadingUpdateRequest(false);
+    await makeRequest(drawSource.id, { ...drawSource, quantity, resource });
     setTimeout(() => setModalDimmed(false), 1500);
   };
 
@@ -41,7 +43,7 @@ const Marker: React.FC<Props> = ({ drawSource }) => {
         onClose={() => setModalOpened(false)}
         onSave={onSaveMarker}
         dimmed={modalDimmed}
-        loading={loadingUpdateRequest}
+        loading={loading}
       />
     </>
   );
