@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   Button,
   Card,
+  Confirm,
   Dimmer,
   DropdownProps,
   Form,
@@ -38,6 +39,11 @@ const MarkerModal: React.FC<Props> = ({
     resource: drawSource.resource,
     quantity: drawSource.quantity,
   });
+  const [confirmDeleteOpened, setConfirmDeleteOpened] = useState(false);
+
+  const onDelete = () => {
+    console.log('deleted!');
+  };
 
   const onFormSubmit = () => {
     onSave(formData.quantity, formData.resource);
@@ -63,7 +69,7 @@ const MarkerModal: React.FC<Props> = ({
 
   return (
     <Modal centered={false} size="tiny" basic closeIcon open={opened} onClose={onClose}>
-      <Modal.Content style={{ padding: '2rem' }}>
+      <Modal.Content>
         <Modal.Header>
           <Header
             as="h1"
@@ -103,9 +109,20 @@ const MarkerModal: React.FC<Props> = ({
                       onChange={onResourceChange}
                     />
                   </Form.Field>
-                  <Button type="submit" fluid color="yellow" style={{ marginTop: '1rem' }}>
-                    Save
-                  </Button>
+                  <div style={{ float: 'right' }}>
+                    <Button type="submit" color="yellow">
+                      Save
+                    </Button>
+                    <Button onClick={() => setConfirmDeleteOpened(true)} type="button" negative>
+                      Delete
+                    </Button>
+                    <Confirm
+                      size="mini"
+                      open={confirmDeleteOpened}
+                      onCancel={() => setConfirmDeleteOpened(false)}
+                      onConfirm={onDelete}
+                    />
+                  </div>
                 </Form>
               </Card.Content>
             </Card>
