@@ -22,7 +22,7 @@ class RegisterSchema(Schema):
     password = fields.Str(required=True)
 
     @post_load
-    def hash_password(self, data, **kwargs):
+    def hash_password(self, data, **_):
         return {**data, 'password': hash_password(data['password'])}
 
 
