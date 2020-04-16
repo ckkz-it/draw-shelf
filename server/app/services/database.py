@@ -22,7 +22,7 @@ class DatabaseService:
         async with self.engine.acquire() as conn:
             query = self.db_table.insert().values(**data)
             if return_created_obj:
-                query = query.returning(*self.db_table.c)
+                query = query.returning(*self.db_table.columns)
             result: ResultProxy = await conn.execute(query)
             return await result.fetchone()
 

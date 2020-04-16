@@ -12,16 +12,11 @@ from app.services.user import UserService
 
 async def register(request: web.Request) -> web.Response:
     data = await request.text()
-    schema = RegisterSchema()
     try:
-        user_data = schema.loads(data)
+        user_data = RegisterSchema().loads(data)
     except ValidationError as e:
         return web.json_response(data=e.messages, status=400)
-
-    result, error = await UserService(engine=request.app['db']).create(user_data)
-    if error:
-        return web.Response(text=str(error), status=500)
-
+    result = await UserService(engine=request.app['db']).create(user_data)
     return web.json_response(result, status=201)
 
 
@@ -31,11 +26,13 @@ async def login(request: web.Request) -> web.Response:
         user_data = LoginSchema().loads(data)
     except ValidationError as e:
         return web.json_response(data=e.messages, status=400)
-    result, error = await UserService(engine=request.app['db']).get_authenticated_user(
-        user_data['email'],
-        user_data['password'],
-    )
-    if error:
+    try:
+        result = await UserService(engine=request.app['db']).get_authenticated_user(
+            user_data['email'],
+            user_data['password'],
+        )
+    except Exception as e:
+        print(e)
         return web.json_response(data={'error': 'Authentication failed'}, status=401)
     return web.json_response({
         'access': AuthService.create_access_token(result),
@@ -47,15 +44,15 @@ async def refresh_token(request: web.Request) -> web.Response:
     try:
         data = await request.json()
     except json.JSONDecodeError:
-        return web.json_response(data={'error': 'Refresh token is required'}, status=400)
+        return web.json_response({'error': 'Refresh token is required'}, status=400)
     token = data and data.get('refresh')
     if not token:
-        return web.json_response(data={'error': 'Refresh token is required'}, status=400)
+        return web.json_response({'error': 'Refresh token is required'}, status=400)
 
     try:
         access = AuthService.refresh_token(token)
     except jwt.InvalidTokenError as e:
-        raise web.HTTPForbidden(reason=f'Invalid authorization token, {e}')
+        raise web.HTTPForbidden(text=f'Invalid authorization token, {e}')
     return web.json_response({'access': access})
 
 
@@ -72,10 +69,7 @@ async def create_draw_source(request: web.Request) -> web.Response:
     except ValidationError as e:
         return web.json_response(e.messages, status=400)
 
-    draw_source, error = await DrawSourceService(engine=request.app['db']).create(ds_data)
-    if error:
-        return web.Response(text=str(error), status=500)
-
+    draw_source = await DrawSourceService(engine=request.app['db']).create(ds_data)
     return web.json_response(draw_source)
 
 

@@ -15,13 +15,9 @@ class DrawSourceService:
     def __init__(self, engine: Engine):
         self.db_service = DatabaseService(engine, db.draw_source)
 
-    async def create(self, ds_data: dict) -> tuple:
-        try:
-            draw_source = await self.db_service.create(ds_data, return_created_obj=True)
-        except Exception as e:
-            return None, e
-        draw_source = self.schema.dump(draw_source)
-        return draw_source, None
+    async def create(self, ds_data: dict) -> dict:
+        draw_source = await self.db_service.create(ds_data, return_created_obj=True)
+        return self.schema.dump(draw_source)
 
     async def get_all(
             self,

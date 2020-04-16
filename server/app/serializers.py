@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields, post_load, SchemaOpts
+from marshmallow import Schema, fields, post_load
 
 from app import db
 from app.helpers import hash_password, EnumField
