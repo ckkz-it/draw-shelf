@@ -22,9 +22,18 @@ type Props = {
   onSave: (quantity: number, resource: DrawSourceResource) => void;
   dimmed: boolean;
   loading: boolean;
+  error: boolean;
 };
 
-const MarkerModal: React.FC<Props> = ({ drawSource, opened, onClose, onSave, dimmed, loading }) => {
+const MarkerModal: React.FC<Props> = ({
+  drawSource,
+  opened,
+  onClose,
+  onSave,
+  dimmed,
+  loading,
+  error,
+}) => {
   const [formData, setFormData] = useState({
     resource: drawSource.resource,
     quantity: drawSource.quantity,
@@ -106,8 +115,17 @@ const MarkerModal: React.FC<Props> = ({ drawSource, opened, onClose, onSave, dim
               <Loader size="big" />
             ) : (
               <Header as="h3" icon style={{ color: '#000000', opacity: '0.85' }}>
-                <Icon name="check" />
-                Successfully updated!
+                {error ? (
+                  <>
+                    <Icon name="exclamation triangle" />
+                    Oops! Error occurred
+                  </>
+                ) : (
+                  <>
+                    <Icon name="check" />
+                    Successfully updated!
+                  </>
+                )}
               </Header>
             )}
           </Dimmer>

@@ -14,15 +14,15 @@ const Marker: React.FC<Props> = ({ drawSource }) => {
   const [modalDimmed, setModalDimmed] = useState(false);
 
   const { drawSourceStore } = useStores();
-  const { makeRequest, loading } = useFetch<void>({
+  const markerUpdate = useFetch<void>({
     fetchFn: drawSourceStore.update,
     immediate: false,
   });
 
   const onSaveMarker = async (quantity: number, resource: DrawSourceResource) => {
     setModalDimmed(true);
-    await makeRequest(drawSource.id, { ...drawSource, quantity, resource });
-    setTimeout(() => setModalDimmed(false), 1500);
+    await markerUpdate.makeRequest(drawSource.id, { ...drawSource, quantity, resource });
+    setTimeout(() => setModalDimmed(false), markerUpdate.error ? 4000 : 2000);
   };
 
   return (
@@ -43,7 +43,8 @@ const Marker: React.FC<Props> = ({ drawSource }) => {
         onClose={() => setModalOpened(false)}
         onSave={onSaveMarker}
         dimmed={modalDimmed}
-        loading={loading}
+        loading={markerUpdate.loading}
+        error={!!markerUpdate.error}
       />
     </>
   );
