@@ -75,3 +75,6 @@ class UserDrawSourceRelationshipSchema(Schema):
     user_id = fields.UUID()
     quantity = fields.Int()
     resource = EnumField(enum=db.DrawSourceResource)
+
+    class Meta:
+        unknown = EXCLUDE

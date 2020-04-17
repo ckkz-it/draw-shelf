@@ -1,5 +1,6 @@
 import typing
 from aiopg.sa import Engine
+from aiopg.sa.result import RowProxy
 
 from app import db
 from app.helpers.password import verify_password
@@ -8,19 +9,25 @@ from app.services.database import DatabaseService
 
 
 class UserService:
-    schema = UserSchema
+    schema = UserSchema()
     db_service: DatabaseService = None
 
     def __init__(self, engine: Engine):
         self.db_service = DatabaseService(engine, db.user)
 
-    async def create(self, user_data: dict) -> dict:
+    async def create(self, user_data: dict, *, dump=True) -> typing.Union[dict, RowProxy]:
         user = await self.db_service.create(user_data, return_created_obj=True)
-        return self.schema().dump(user)
+        if dump:
+            return self.schema.dump(user)
+        return user
 
-    async def get_authenticated_user(self, email: str, password: str) -> typing.Optional[dict]:
+    async def get_authenticated_user(
+            self, email: str, password: str, *, dump=True
+    ) -> typing.Optional[typing.Union[dict, RowProxy]]:
         result = await self.db_service.get_one(db.user.c.email == email)
         if result:
             if verify_password(password, result.get('password')):
-                return self.schema().dump(result)
+                if dump:
+                    return self.schema.dump(result)
+                return result
         return None

@@ -5,7 +5,7 @@ from aiopg.sa.result import RowProxy, ResultProxy
 from sqlalchemy import Table
 from sqlalchemy.sql.elements import BinaryExpression, BooleanClauseList
 
-from app.types import FETCH, DB_EXECUTE_RESULT
+from app.app_types import FETCH, DB_EXECUTE_RESULT
 
 
 class DatabaseService:
