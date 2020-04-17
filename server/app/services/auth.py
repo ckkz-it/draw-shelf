@@ -33,4 +33,4 @@ class AuthService:
     @classmethod
     def refresh_token(cls, token: str) -> str:
         payload = cls.get_token_payload(token)
-        return cls.create_access_token(payload)
+        return cls.create_access_token(payload['user'])
