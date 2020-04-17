@@ -5,7 +5,7 @@ from sqlalchemy import select, and_
 from sqlalchemy.sql.elements import BinaryExpression, BooleanClauseList
 
 from app import db
-from app.helpers import DBDataParser
+from app.helpers.utils import DBDataParser
 from app.serializers import DrawSourceSchema, UserDrawSourceRelationshipSchema, DrawSourceForUserSchema
 from app.services.database import DatabaseService
 from app.types import FETCH
@@ -62,4 +62,3 @@ class DrawSourceService:
         result = await self.db_service.execute(query, fetch=fetch)
         data = DBDataParser(result, ['draw_sources', 'users_draw_sources'], many=many).parse()
         return DrawSourceForUserSchema(many=many).dump(data)
-

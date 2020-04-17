@@ -2,7 +2,7 @@ import typing
 from aiopg.sa import Engine
 
 from app import db
-from app.helpers import verify_password
+from app.helpers.password import verify_password
 from app.serializers import UserSchema
 from app.services.database import DatabaseService
 

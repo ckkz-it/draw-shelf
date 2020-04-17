@@ -4,7 +4,7 @@ import jwt
 from aiohttp import web
 from marshmallow import ValidationError
 
-from app.helpers import ListCreateAPIView, RetrieveUpdateAPIView
+from app.helpers.views import ListCreateAPIView, RetrieveUpdateAPIView
 from app.serializers import RegisterSchema, LoginSchema, DrawSourceCreateSchema, DrawSourceForUserSchema
 from app.services.auth import AuthService
 from app.services.draw_source import DrawSourceService

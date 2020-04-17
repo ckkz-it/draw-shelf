@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 import sqlalchemy as sa
 
 from app import db
-from app.helpers import hash_password
+from app.helpers.password import hash_password
 
 BASE_DIR = pathlib.Path(__file__).parent.parent
 fixtures_dir = BASE_DIR / 'fixtures'

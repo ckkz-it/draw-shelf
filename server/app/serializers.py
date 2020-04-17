@@ -1,7 +1,8 @@
 from marshmallow import Schema, fields, post_load, EXCLUDE
 
 from app import db
-from app.helpers import hash_password, EnumField
+from app.helpers.fields import EnumField
+from app.helpers.password import hash_password
 
 
 class UserSchema(Schema):
