@@ -11,3 +11,4 @@ jwt:
   access_exp: 1800
   refresh_exp: 864000
   algorithm: HS256
+  request_property: jwt_payload

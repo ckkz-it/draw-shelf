@@ -10,7 +10,7 @@ app = web.Application(
         jwt_middleware_with_cors(
             secret_or_pub_key=config['jwt']['secret'],
             algorithms=[config['jwt']['algorithm']],
-            request_property='token_payload',
+            request_property=config['jwt']['request_property'],
             whitelist=['/auth/*'],
         )
     ]
