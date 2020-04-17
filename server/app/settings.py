@@ -12,12 +12,12 @@ config_path = BASE_DIR / 'config' / 'main.yaml'
 
 load_dotenv(dotenv_path=BASE_DIR / '.env')
 
-FROM_ENV_RE = re.compile(r'!ENV\s\w+', re.IGNORECASE)
+FROM_ENV_RE = re.compile(r'\(\(\w+\)\)')
 
 
 def parse_env_placeholders(content: str) -> str:
     def replace(match: re.Match):
-        value = match.group().lstrip('!ENV').strip()
+        value = match.group().strip('() ')
         return os.getenv(value)
 
     return FROM_ENV_RE.sub(replace, content)
