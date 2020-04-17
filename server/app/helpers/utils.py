@@ -3,8 +3,6 @@ from collections import defaultdict
 
 from aiopg.sa.result import RowProxy
 
-from app import db
-
 
 class DBDataParser:
     def __init__(
@@ -38,6 +36,7 @@ class DBDataParser:
 
     @property
     def _all_tables(self):
+        from app import db
         return list(db.meta.tables)
 
     def _extract_table_name_and_dict_key(self, key: str) -> typing.Tuple[str, str]:
@@ -47,3 +46,21 @@ class DBDataParser:
                 if self.table_name_mapping and tbl in self.table_name_mapping:
                     return self.table_name_mapping[tbl], key
                 return tbl, key
+
+
+class Map(dict):
+    def __init__(self, dct):
+        super().__init__(dct)
+        for key, item in dct.items():
+            if isinstance(item, dict):
+                item = Map(item)
+            self.__dict__[key] = item
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+    def __getattr__(self, key):
+        return self.__dict__[key]
+
+    def __setattr__(self, name, value):
+        self.__dict__[name] = value
