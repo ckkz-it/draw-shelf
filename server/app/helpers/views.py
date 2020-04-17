@@ -230,6 +230,8 @@ class RetrieveDestroyAPIView(RetrieveModelMixin,
 
 
 class RetrieveUpdateDestroyAPIView(RetrieveModelMixin,
+                                   UpdateModelMixin,
+                                   DestroyModelMixin,
                                    GenericAPIView):
     async def get(self, *args, **kwargs):
         return await self.retrieve(*args, **kwargs)

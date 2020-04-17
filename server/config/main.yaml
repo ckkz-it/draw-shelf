@@ -1,14 +1,14 @@
 postgres:
-  database: "{{POSTGRES_DB}}"
-  user: "{{POSTGRES_USER}}"
-  password: "{{POSTGRES_PASSWORD}}"
-  host: "{{POSTGRES_HOST}}"
-  port: "{{POSTGRES_PORT}}"
+  database: !ENV POSTGRES_DB
+  user: !ENV POSTGRES_USER
+  password: !ENV POSTGRES_PASSWORD
+  host: !ENV POSTGRES_HOST
+  port: !ENV POSTGRES_PORT
   minsize: 1
   maxsize: 5
 jwt:
-  secret: "{{JWT_SECRET}}"
-  access_exp: "{{JWT_ACCESS_EXP}}"
-  refresh_exp: "{{JWT_REFRESH_EXP}}"
-  algorithm: "{{JWT_ALGORITHM}}"
+  secret: !ENV JWT_SECRET
+  access_exp: !ENV JWT_ACCESS_EXP
+  refresh_exp: !ENV JWT_REFRESH_EXP
+  algorithm: !ENV JWT_ALGORITHM
   request_property: jwt_payload
