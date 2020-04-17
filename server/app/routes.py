@@ -2,15 +2,15 @@ import aiohttp_cors
 from aiohttp.web_app import Application
 
 from app import views
+from app.views import DrawSourcesListCreateView, DrawSourceRetrieveUpdateView
 
 
 def setup_routes(app: Application):
     app.router.add_post('/auth/register', views.register)
     app.router.add_post('/auth/login', views.login)
     app.router.add_post('/auth/refresh', views.refresh_token)
-    app.router.add_get('/draw_sources', views.get_draw_sources)
-    app.router.add_post('/draw_sources', views.create_draw_source)
-    app.router.add_put('/draw_sources/{id}', views.update_draw_source)
+    app.router.add_view('/draw_sources', DrawSourcesListCreateView)
+    app.router.add_view('/draw_sources/{id}', DrawSourceRetrieveUpdateView)
 
 
 def setup_cors(app: Application):

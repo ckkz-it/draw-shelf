@@ -1,3 +1,12 @@
 import typing
+from enum import Enum
 
-FETCH = typing.Literal['all', 'one']
+from aiopg.sa.result import RowProxy, ResultProxy
+
+
+class FETCH(Enum):
+    all = 'all'
+    one = 'one'
+
+
+DB_EXECUTE_RESULT = typing.Union[typing.List[RowProxy], typing.Optional[RowProxy], ResultProxy]

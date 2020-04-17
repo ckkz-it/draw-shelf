@@ -4,10 +4,12 @@ import jwt
 from aiohttp import web
 from marshmallow import ValidationError
 
+from app.helpers import ListCreateAPIView, RetrieveUpdateAPIView
 from app.serializers import RegisterSchema, LoginSchema, DrawSourceCreateSchema, DrawSourceForUserSchema
 from app.services.auth import AuthService
 from app.services.draw_source import DrawSourceService
 from app.services.user import UserService
+from app import db
 
 
 async def register(request: web.Request) -> web.Response:
@@ -56,37 +58,46 @@ async def refresh_token(request: web.Request) -> web.Response:
     return web.json_response({'access': access})
 
 
-async def get_draw_sources(request: web.Request) -> web.Response:
-    user = request['token_payload']['user']
-    data = await UserService(engine=request.app['db']).get_draw_sources(user['id'])
-    return web.json_response(data)
+class DrawSourcesListCreateView(ListCreateAPIView):
+    db_table = db.draw_source
+    schema_class = DrawSourceForUserSchema
+
+    async def create(self):
+        data = await self.request.text()
+        try:
+            ds_data = DrawSourceCreateSchema().loads(data)
+        except ValidationError as e:
+            return web.json_response(e.messages, status=400)
+
+        draw_source = await DrawSourceService(engine=self.request.app['db']).create(ds_data)
+        return web.json_response(draw_source)
+
+    async def list(self):
+        user = self.request['token_payload']['user']
+        data = await DrawSourceService(engine=self.request.app['db']).get_for_user(user['id'], many=True)
+        return web.json_response(data)
 
 
-async def create_draw_source(request: web.Request) -> web.Response:
-    data = await request.text()
-    try:
-        ds_data = DrawSourceCreateSchema().loads(data)
-    except ValidationError as e:
-        return web.json_response(e.messages, status=400)
+class DrawSourceRetrieveUpdateView(RetrieveUpdateAPIView):
+    db_table = db.draw_source
+    schema_class = DrawSourceForUserSchema
 
-    draw_source = await DrawSourceService(engine=request.app['db']).create(ds_data)
-    return web.json_response(draw_source)
+    async def retrieve(self):
+        obj = await self.get_object()
+        return web.json_response(obj)
 
+    async def update(self):
+        ds_id = self.kwargs['id']
+        data = await self.request.text()
+        schema = self.get_schema()
+        try:
+            ds_data = schema.loads(data)
+        except ValidationError as e:
+            return web.json_response(e.messages, status=400)
 
-async def update_draw_source(request: web.Request) -> web.Response:
-    ds_id = request.match_info.get('id')
-    if not ds_id:
-        return web.Response(status=404)
+        await self.get_object()  # may raise 404
+        ds_service = DrawSourceService(engine=self.request.app['db'])
+        updated_ds = await ds_service.update(ds_id, ds_data)
+        updated_ds = schema.dump(updated_ds)
 
-    schema = DrawSourceForUserSchema()
-    data = await request.text()
-    ds_data = schema.loads(data)
-
-    service = DrawSourceService(engine=request.app['db'])
-    ds = await service.get_by_id(ds_id)
-    if not ds:
-        return web.Response(status=404)
-
-    await service.update(ds_id, ds_data)
-
-    return web.json_response(ds_data, dumps=schema.dumps)
+        return web.json_response(updated_ds)

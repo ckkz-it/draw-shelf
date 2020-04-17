@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields, post_load
+from marshmallow import Schema, fields, post_load, EXCLUDE
 
 from app import db
 from app.helpers import hash_password, EnumField
@@ -50,6 +50,7 @@ class DrawSourceSchema(Schema):
 
     class Meta:
         ordered = True
+        unknown = EXCLUDE
 
 
 class DrawSourceForUserSchema(DrawSourceSchema):
