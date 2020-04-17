@@ -7,7 +7,6 @@ from aiopg.sa import Engine
 from marshmallow import Schema, ValidationError
 
 from app.services.database import DatabaseService
-from app.settings import config
 from app.app_types import FETCH
 
 
@@ -51,7 +50,7 @@ class GenericAPIView(CorsViewMixin, web.View):
 
     @property
     def user(self) -> typing.Optional[dict]:
-        request_property = config['jwt']['request_property']
+        request_property = self.request.app['config']['jwt']['request_property']
         return self.request[request_property].get('user')
 
     def get_query(self):
