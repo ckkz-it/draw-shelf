@@ -13,7 +13,7 @@ from app.settings import config
 engine: Optional[aiopg.sa.Engine] = None
 sync_engine: Optional[sa.engine.Engine] = None
 
-DB_URL = "postgresql://{user}:{password}@{host}:{port}/{database}".format(**config['postgres'])
+DB_URL = "postgresql://{user}:{password}@{host}:{port}/{database}".format(**config.postgres)
 
 
 async def get_engine() -> aiopg.sa.Engine:

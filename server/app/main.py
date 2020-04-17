@@ -8,9 +8,9 @@ from app.middlewares import jwt_middleware_with_cors
 app = web.Application(
     middlewares=[
         jwt_middleware_with_cors(
-            secret_or_pub_key=config['jwt']['secret'],
-            algorithms=[config['jwt']['algorithm']],
-            request_property=config['jwt']['request_property'],
+            secret_or_pub_key=config.jwt.secret,
+            algorithms=[config.jwt.algorithm],
+            request_property=config.jwt.request_property,
             whitelist=['/auth/*'],
         )
     ]

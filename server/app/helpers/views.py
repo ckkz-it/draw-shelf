@@ -50,7 +50,7 @@ class GenericAPIView(CorsViewMixin, web.View):
 
     @property
     def user(self) -> typing.Optional[dict]:
-        request_property = self.request.app['config']['jwt']['request_property']
+        request_property = self.request.app['config'].jwt.request_property
         return self.request[request_property].get('user')
 
     def get_query(self):
