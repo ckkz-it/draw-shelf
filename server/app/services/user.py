@@ -1,10 +1,9 @@
 import typing
 from aiopg.sa import Engine
-from sqlalchemy import select
 
 from app import db
-from app.helpers import verify_password, DBDataParser
-from app.serializers import UserSchema, DrawSourceForUserSchema
+from app.helpers import verify_password
+from app.serializers import UserSchema
 from app.services.database import DatabaseService
 
 
@@ -25,14 +24,3 @@ class UserService:
             if verify_password(password, result.get('password')):
                 return self.schema().dump(result)
         return None
-
-    async def get_draw_sources(self, user_id: str):
-        query = select([db.user_draw_source_relationship.c.resource,
-                        db.user_draw_source_relationship.c.quantity,
-                        db.draw_source, db.company], use_labels=True) \
-            .select_from(db.user_draw_source_relationship.join(db.draw_source.join(db.company))) \
-            .where(db.user_draw_source_relationship.c.user_id == user_id) \
-            .order_by(db.draw_source.c.code)
-        result = await self.db_service.get_all_custom(query)
-        data = DBDataParser(result, ['draw_sources', 'users_draw_sources'], many=True).parse()
-        return DrawSourceForUserSchema(many=True).dump(data)

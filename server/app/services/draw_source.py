@@ -1,11 +1,14 @@
 import typing
 
 from aiopg.sa import Engine
+from sqlalchemy import select, and_
 from sqlalchemy.sql.elements import BinaryExpression, BooleanClauseList
 
 from app import db
-from app.serializers import DrawSourceSchema, UserDrawSourceRelationshipSchema
+from app.helpers import DBDataParser
+from app.serializers import DrawSourceSchema, UserDrawSourceRelationshipSchema, DrawSourceForUserSchema
 from app.services.database import DatabaseService
+from app.types import FETCH
 
 
 class DrawSourceService:
@@ -40,8 +43,23 @@ class DrawSourceService:
         return self.schema.dump(result)
 
     async def update(self, ds_id: str, data: dict):
-        schema = DrawSourceSchema(exclude=['companies'])
-        await self.db_service.update(schema.dump(data), where=db.draw_source.c.id == ds_id)
+        await self.db_service.update(self.schema.dump(data), where=db.draw_source.c.id == ds_id)
         udsr = db.user_draw_source_relationship
         query = udsr.update(udsr.c.draw_source_id == ds_id).values(UserDrawSourceRelationshipSchema().dump(data))
         await self.db_service.execute(query)
+
+    async def get_for_user(self, user_id: str, ds_id: str = None, *, many=False):
+        udsr = db.user_draw_source_relationship
+        query = select([udsr.c.resource, udsr.c.quantity, db.draw_source, db.company], use_labels=True) \
+            .select_from(udsr.join(db.draw_source.join(db.company))) \
+            .order_by(db.draw_source.c.code)
+        if many:
+            query = query.where(udsr.c.user_id == user_id)
+            fetch = FETCH.all
+        else:
+            query = query.where(and_(udsr.c.user_id == user_id, udsr.c.draw_source_id == ds_id))
+            fetch = FETCH.one
+        result = await self.db_service.execute(query, fetch=fetch)
+        data = DBDataParser(result, ['draw_sources', 'users_draw_sources'], many=many).parse()
+        return DrawSourceForUserSchema(many=many).dump(data)
+
