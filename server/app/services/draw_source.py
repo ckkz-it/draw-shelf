@@ -13,7 +13,7 @@ from app.app_types import FETCH
 
 
 class DrawSourceService:
-    schema = DrawSourceSchema()
+    schema = DrawSourceSchema
     db_service: DatabaseService = None
 
     def __init__(self, engine: Engine):
@@ -22,7 +22,7 @@ class DrawSourceService:
     async def create(self, ds_data: dict, *, dump=True) -> typing.Union[dict, RowProxy]:
         draw_source = await self.db_service.create(ds_data, return_created_obj=True)
         if dump:
-            return self.schema.dump(draw_source)
+            return self.schema().dump(draw_source)
         return draw_source
 
     async def get_all(
@@ -32,7 +32,7 @@ class DrawSourceService:
     ):
         results = await self.db_service.get_all(where, limit)
         if dump:
-            return self.schema.dump(results, many=True)
+            return self.schema().dump(results, many=True)
         return results
 
     async def get_by_id(self, ds_id: str, *, dump=True) -> typing.Optional[dict]:
@@ -47,27 +47,27 @@ class DrawSourceService:
         if not result:
             return None
         if dump:
-            return self.schema.dump(result)
+            return self.schema().dump(result)
         return result
 
     async def update(self, ds_id: str, data: dict, *, dump=True):  # `dump` here for compatibility
         # update draw_source related data
-        await self.db_service.update(self.schema.dump(data), where=db.draw_source.c.id == ds_id)
-        udsr = db.user_draw_source_relationship
+        ds_data = self.schema(exclude=['companies']).dump(data)
+        await self.db_service.update(ds_data, where=db.draw_source.c.id == ds_id)
         # update users_draw_sources relationship related data
-        query = udsr.update(udsr.c.draw_source_id == ds_id).values(UserDrawSourceRelationshipSchema().dump(data))
+        udsr_data = UserDrawSourceRelationshipSchema().dump(data)
+        query = db.udsr.update(db.udsr.c.draw_source_id == ds_id).values(udsr_data)
         await self.db_service.execute(query)
 
     async def get_for_user(self, user_id: str, ds_id: str = None, *, many=False, dump=True):
-        udsr = db.user_draw_source_relationship
-        query = select([udsr.c.resource, udsr.c.quantity, db.draw_source, db.company], use_labels=True) \
-            .select_from(udsr.join(db.draw_source.join(db.company))) \
+        query = select([db.udsr.c.resource, db.udsr.c.quantity, db.draw_source, db.company], use_labels=True) \
+            .select_from(db.udsr.join(db.draw_source.join(db.company))) \
             .order_by(db.draw_source.c.code)
         if many:
-            query = query.where(udsr.c.user_id == user_id)
+            query = query.where(db.udsr.c.user_id == user_id)
             fetch = FETCH.all
         else:
-            query = query.where(and_(udsr.c.user_id == user_id, udsr.c.draw_source_id == ds_id))
+            query = query.where(and_(db.udsr.c.user_id == user_id, db.udsr.c.draw_source_id == ds_id))
             fetch = FETCH.one
         result = await self.db_service.execute(query, fetch=fetch)
         data = DBDataParser(result, ['draw_sources', 'users_draw_sources'], many=many).parse()

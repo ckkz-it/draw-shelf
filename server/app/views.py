@@ -75,23 +75,3 @@ class DrawSourceRetrieveUpdateView(RetrieveUpdateAPIView):
     async def get_object(self):
         return await self.db_table_service_class(self.engine) \
             .get_for_user(self.user['id'], self.kwargs['id'], dump=False)
-
-    # async def retrieve(self):
-    #     obj = await self.get_object()
-    #     return web.json_response(obj)
-
-    # async def update(self):
-    #     ds_id = self.kwargs['id']
-    #     data = await self.request.text()
-    #     schema = self.get_schema()
-    #     try:
-    #         ds_data = schema.loads(data)
-    #     except ValidationError as e:
-    #         return web.json_response(e.messages, status=400)
-    #
-    #     await self.get_object()  # may raise 404
-    #     ds_service = DrawSourceService(engine=self.request.app['db'])
-    #     await ds_service.update(ds_id, ds_data)
-    #     updated_ds = await self.get_object()
-    #
-    #     return web.json_response(schema.dump(updated_ds))

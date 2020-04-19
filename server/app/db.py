@@ -58,6 +58,8 @@ user_draw_source_relationship = sa.Table(
     sa.Column('quantity', sa.Integer, nullable=False, default=1),
 )
 
+udsr = user_draw_source_relationship
+
 user = sa.Table(
     'users', meta,
     sa.Column('id', UUID(as_uuid=True), primary_key=True, default=uuid4),
