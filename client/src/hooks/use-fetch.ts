@@ -20,7 +20,7 @@ export const useFetch = <T>({ fetchFn, fnArgs = emptyArgs, immediate = true }: u
 
   const fetchRequest = useCallback(
     async (...extraArgs: any[]) => {
-      setState((s) => ({ ...s, loading: true }));
+      setState((s) => ({ ...s, loading: true, error: null }));
       try {
         const data = await fetchFn(...fnArgs, ...extraArgs);
         if (data !== undefined) {

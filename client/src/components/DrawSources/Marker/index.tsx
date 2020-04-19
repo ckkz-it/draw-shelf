@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { observer } from 'mobx-react-lite';
 
 import { DrawSourceResource, IDrawSource } from '../../../interfaces/draw-source';
 import { StyledMarker } from './styles';
@@ -9,7 +10,7 @@ import { useFetch } from '../../../hooks/use-fetch';
 
 type Props = { drawSource: IDrawSource };
 
-const Marker: React.FC<Props> = ({ drawSource }) => {
+const Marker: React.FC<Props> = observer(({ drawSource }) => {
   const [modalOpened, setModalOpened] = useState(false);
   const [modalDimmed, setModalDimmed] = useState(false);
 
@@ -48,6 +49,6 @@ const Marker: React.FC<Props> = ({ drawSource }) => {
       />
     </>
   );
-};
+});
 
 export default Marker;

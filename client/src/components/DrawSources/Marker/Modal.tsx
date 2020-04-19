@@ -43,6 +43,7 @@ const MarkerModal: React.FC<Props> = ({
 
   const onDelete = () => {
     console.log('deleted!');
+    setConfirmDeleteOpened(false);
   };
 
   const onFormSubmit = () => {
