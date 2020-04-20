@@ -21,22 +21,20 @@ def create_ds_from_fixtures(eng: sa.engine.Engine, file) -> sa.engine.ResultProx
     with open(file) as f:
         data = json.loads(f.read())
 
-    draw_source_to_insert = []
-    for company_item in data:
-        for company_name, company_ds in company_item.items():
-            res: sa.engine.ResultProxy = eng.execute(db.company.select(db.company.c.name == company_name))
-            company_id = None
-            if res.rowcount == 1:
-                company_id = str(res.first().id)
-            else:
-                res: sa.engine.ResultProxy = eng.execute(
-                    db.company.insert().values(name=company_name).returning(db.company.c.id)
-                )
-                company_id = str(res.first().id)
-            draw_source_to_insert.extend(map(lambda x: {**x, 'company_id': company_id}, company_ds))
+    draw_sources_to_insert = []
+    for company_name, company_ds in data.items():
+        res: sa.engine.ResultProxy = eng.execute(db.company.select(db.company.c.name == company_name))
+        if res.rowcount == 1:
+            company_id = str(res.first().id)
+        else:
+            res: sa.engine.ResultProxy = eng.execute(
+                db.company.insert().values(name=company_name).returning(db.company.c.id)
+            )
+            company_id = str(res.first().id)
+        draw_sources_to_insert.extend([{**x, 'company_id': company_id} for x in company_ds])
 
     created_ds: sa.engine.ResultProxy = eng.execute(
-        db.draw_source.insert().values(draw_source_to_insert).returning(db.draw_source.c.id)
+        db.draw_source.insert().values(draw_sources_to_insert).returning(db.draw_source.c.id)
     )
     return created_ds
 
