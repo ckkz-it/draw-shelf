@@ -1,4 +1,5 @@
 import typing
+
 from aiopg.sa import Engine
 from aiopg.sa.result import RowProxy
 

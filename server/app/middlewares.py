@@ -2,6 +2,7 @@ from functools import wraps
 
 from aiohttp import hdrs
 from aiohttp.web_request import Request
+
 from aiohttp_jwt import JWTMiddleware
 
 

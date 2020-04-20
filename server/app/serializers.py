@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields, post_load, EXCLUDE
+from marshmallow import EXCLUDE, Schema, fields, post_load
 
 from app import db
 from app.helpers.fields import EnumField

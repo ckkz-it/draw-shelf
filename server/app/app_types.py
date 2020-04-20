@@ -1,7 +1,7 @@
 import typing
 from enum import Enum
 
-from aiopg.sa.result import RowProxy, ResultProxy
+from aiopg.sa.result import ResultProxy, RowProxy
 
 
 class FETCH(Enum):

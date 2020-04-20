@@ -1,13 +1,17 @@
 import typing
 
-import sqlalchemy as sa
 from aiohttp import web
-from aiohttp_cors import CorsViewMixin
+
 from aiopg.sa import Engine
+
+from aiohttp_cors import CorsViewMixin
+
+import sqlalchemy as sa
+
 from marshmallow import Schema, ValidationError
 
-from app.services.database import DatabaseService
 from app.app_types import FETCH
+from app.services.database import DatabaseService
 
 
 class GenericAPIView(CorsViewMixin, web.View):

@@ -1,9 +1,9 @@
 from aiohttp import web
 
-from app.db import init_pg, close_pg
-from app.routes import setup_routes, setup_cors
-from app.settings import config
+from app.db import close_pg, init_pg
 from app.middlewares import jwt_middleware_with_cors
+from app.routes import setup_cors, setup_routes
+from app.settings import config
 
 app = web.Application(
     middlewares=[

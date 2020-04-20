@@ -3,9 +3,11 @@ import enum
 from typing import Optional
 from uuid import uuid4
 
-import aiopg.sa
-import sqlalchemy as sa
 from aiohttp.web_app import Application
+
+import aiopg.sa
+
+import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import UUID
 
 from app.settings import config

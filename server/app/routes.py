@@ -1,5 +1,6 @@
-import aiohttp_cors
 from aiohttp.web_app import Application
+
+import aiohttp_cors
 
 from app import views
 

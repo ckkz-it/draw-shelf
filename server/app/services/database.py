@@ -1,11 +1,12 @@
 import typing
 
 from aiopg.sa import Engine
-from aiopg.sa.result import RowProxy, ResultProxy
+from aiopg.sa.result import ResultProxy, RowProxy
+
 from sqlalchemy import Table
 from sqlalchemy.sql.elements import BinaryExpression, BooleanClauseList
 
-from app.app_types import FETCH, DB_EXECUTE_RESULT
+from app.app_types import DB_EXECUTE_RESULT, FETCH
 
 
 class DatabaseService:

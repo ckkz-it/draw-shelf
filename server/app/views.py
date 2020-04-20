@@ -1,15 +1,17 @@
 import json
 
-import jwt
-from aiohttp import web, hdrs
+from aiohttp import web
+
 from marshmallow import ValidationError
 
+import jwt
+
+from app import db
 from app.helpers.views import ListCreateAPIView, RetrieveUpdateAPIView
-from app.serializers import RegisterSchema, LoginSchema, DrawSourceCreateSchema, DrawSourceForUserSchema
+from app.serializers import DrawSourceCreateSchema, DrawSourceForUserSchema, LoginSchema, RegisterSchema
 from app.services.auth import AuthService
 from app.services.draw_source import DrawSourceService
 from app.services.user import UserService
-from app import db
 
 
 async def register(request: web.Request) -> web.Response:

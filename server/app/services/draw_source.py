@@ -2,14 +2,15 @@ import typing
 
 from aiopg.sa import Engine
 from aiopg.sa.result import RowProxy
-from sqlalchemy import select, and_
+
+from sqlalchemy import and_, select
 from sqlalchemy.sql.elements import BinaryExpression, BooleanClauseList
 
 from app import db
-from app.helpers.utils import DBDataParser
-from app.serializers import DrawSourceSchema, UserDrawSourceRelationshipSchema, DrawSourceForUserSchema
-from app.services.database import DatabaseService
 from app.app_types import FETCH
+from app.helpers.utils import DBDataParser
+from app.serializers import DrawSourceForUserSchema, DrawSourceSchema, UserDrawSourceRelationshipSchema
+from app.services.database import DatabaseService
 
 
 class DrawSourceService:
