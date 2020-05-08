@@ -6,8 +6,8 @@ from app import views
 
 
 def setup_routes(app: Application):
-    app.router.add_post('/auth/register', views.register)
-    app.router.add_post('/auth/login', views.login)
+    app.router.add_view('/auth/register', views.RegisterView)
+    app.router.add_view('/auth/login', views.LoginView)
     app.router.add_post('/auth/refresh', views.refresh_token)
     app.router.add_view('/draw_sources', views.DrawSourcesListCreateView)
     app.router.add_view('/draw_sources/{id}', views.DrawSourceRetrieveUpdateView)

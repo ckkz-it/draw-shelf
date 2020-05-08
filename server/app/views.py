@@ -1,47 +1,48 @@
 import json
+import typing
 
 from aiohttp import web
 
-from marshmallow import ValidationError
+from aiopg.sa import Engine
+
+from aiohttp_rest_framework import views
 
 import jwt
 
-from app import db
-from app.helpers.views import ListCreateAPIView, RetrieveUpdateAPIView
-from app.serializers import DrawSourceCreateSchema, DrawSourceForUserSchema, LoginSchema, RegisterSchema
+from app.serializers import DrawSourceForUserSerializer, DrawSourceSerializer, LoginSerializer, UserSerializer
 from app.services.auth import AuthService
 from app.services.draw_source import DrawSourceService
-from app.services.user import UserService
 
 
-async def register(request: web.Request) -> web.Response:
-    data = await request.text()
-    try:
-        user_data = RegisterSchema().loads(data)
-    except ValidationError as e:
-        return web.json_response(data=e.messages, status=400)
-    result = await UserService(engine=request.app['db']).create(user_data)
-    return web.json_response(result, status=201)
+class EngineUserMixin:
+    @property
+    def engine(self) -> Engine:
+        return self.request.app['db']
+
+    @property
+    def user(self) -> typing.Optional[dict]:
+        request_property = self.request.app['config'].jwt.request_property
+        return self.request[request_property].get('user')
 
 
-async def login(request: web.Request) -> web.Response:
-    data = await request.text()
-    try:
-        user_data = LoginSchema().loads(data)
-    except ValidationError as e:
-        return web.json_response(data=e.messages, status=400)
-    try:
-        result = await UserService(engine=request.app['db']).get_authenticated_user(
-            user_data['email'],
-            user_data['password'],
-        )
-    except Exception as e:
-        print(e)
-        return web.json_response(data={'error': 'Authentication failed'}, status=401)
-    return web.json_response({
-        'access': AuthService.create_access_token(result),
-        'refresh': AuthService.create_refresh_token(result)
-    })
+class RegisterView(views.CreateAPIView):
+    serializer_class = UserSerializer
+
+
+class LoginView(views.CreateAPIView):
+    serializer_class = LoginSerializer
+
+    async def create(self):
+        data = await self.request.json()
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        user = await serializer.save()
+        if user is None:
+            return web.json_response(data={'error': 'Authentication failed'}, status=401)
+        return web.json_response({
+            'access': AuthService.create_access_token(user),
+            'refresh': AuthService.create_refresh_token(user)
+        })
 
 
 async def refresh_token(request: web.Request) -> web.Response:
@@ -60,20 +61,15 @@ async def refresh_token(request: web.Request) -> web.Response:
     return web.json_response({'access': access})
 
 
-class DrawSourcesListCreateView(ListCreateAPIView):
-    db_table = db.draw_source
-    validation_schema_class = DrawSourceCreateSchema
+class DrawSourcesListCreateView(EngineUserMixin, views.ListCreateAPIView):
+    serializer_class = DrawSourceSerializer
 
-    async def list(self):
-        data = await DrawSourceService(self.engine).get_for_user(self.user['id'], many=True)
-        return web.json_response(data)
+    async def get_list(self):
+        return await DrawSourceService(self.engine).get_for_user(self.user['id'], many=True)
 
 
-class DrawSourceRetrieveUpdateView(RetrieveUpdateAPIView):
-    db_table = db.draw_source
-    db_table_service_class = DrawSourceService
-    schema_class = DrawSourceForUserSchema
+class DrawSourceRetrieveUpdateView(EngineUserMixin, views.RetrieveUpdateAPIView):
+    serializer_class = DrawSourceForUserSerializer
 
     async def get_object(self):
-        return await self.db_table_service_class(self.engine) \
-            .get_for_user(self.user['id'], self.kwargs['id'], dump=False)
+        return await DrawSourceService(self.engine).get_for_user(self.user['id'], self.kwargs['id'])

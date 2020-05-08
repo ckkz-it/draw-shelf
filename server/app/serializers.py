@@ -1,80 +1,92 @@
-from marshmallow import EXCLUDE, Schema, fields, post_load
+import typing
+
+from aiohttp_rest_framework import exceptions, fields
+from aiohttp_rest_framework.serializers import ModelSerializer
+
+from marshmallow import post_load
 
 from app import db
-from app.helpers.fields import EnumField
-from app.helpers.password import hash_password
+from app.helpers.password import hash_password, verify_password
 
 
-class UserSchema(Schema):
-    id = fields.UUID()
-    name = fields.Str()
-    phone = fields.Str()
-    email = fields.Email()
-    created_at = fields.DateTime()
+class UserSerializer(ModelSerializer):
+    id = fields.UUID(read_only=True)
+    password = fields.Str(write_only=True)
+    created_at = fields.DateTime(read_only=True)
 
     class Meta:
-        ordered = True
-
-
-class RegisterSchema(Schema):
-    name = fields.Str(default='')
-    phone = fields.Str(default='')
-    email = fields.Str(required=True)
-    password = fields.Str(required=True)
+        model = db.user
+        fields = ('id', 'name', 'phone', 'email', 'password', 'created_at')
 
     @post_load
     def hash_password(self, data, **_):
-        return {**data, 'password': hash_password(data['password'])}
+        if 'password' in data:
+            return {**data, 'password': hash_password(data['password'])}
+        return data
 
 
-class LoginSchema(Schema):
-    email = fields.Str(required=True)
-    password = fields.Str(required=True)
+class LoginSerializer(ModelSerializer):
+    class Meta:
+        model = db.user
+        fields = ('email', 'password')
+
+    async def save(self, **kwargs):
+        db_service = await self.get_db_service()
+        try:
+            user = await db_service.get(email=self.validated_data['email'])
+        except exceptions.ObjectNotFound:
+            return None
+        if verify_password(self.validated_data['password'], user.password):
+            return UserSerializer(user).data
+        return None
 
 
-class CompanySchema(Schema):
+class CompanySerializer(ModelSerializer):
     id = fields.UUID()
     name = fields.Str()
 
     class Meta:
-        ordered = True
+        model = db.company
+        fields = '__all__'
 
 
-class DrawSourceSchema(Schema):
-    id = fields.UUID()
-    type = EnumField(enum=db.DrawSourceType)
-    name = fields.Str()
-    companies = fields.Nested(CompanySchema, data_key='company')
-    color = fields.Str()
-    code = fields.Str()
-    color_category = fields.Str()
+class DrawSourceSerializer(ModelSerializer):
+    companies = fields.Nested(CompanySerializer, data_key='company')
 
     class Meta:
-        ordered = True
-        unknown = EXCLUDE
+        model = db.draw_source
+        fields = ('id', 'type', 'name', 'companies', 'color', 'code', 'color_category')
 
 
-class DrawSourceForUserSchema(DrawSourceSchema):
+class DrawSourceForUserSerializer(DrawSourceSerializer):
     quantity = fields.Int()
-    resource = EnumField(enum=db.DrawSourceResource)
+    resource = fields.Enum(db.DrawSourceResource)
+
+    class Meta(DrawSourceSerializer.Meta):
+        fields = (
+            'id', 'type', 'name', 'companies', 'color', 'code', 'color_category', 'quantity', 'resource'
+        )
+
+    async def update(self, instance, validated_data: typing.OrderedDict):
+        from app.services.draw_source import DrawSourceService
+
+        engine = self.serializer_context['view'].engine
+        user = self.serializer_context['view'].user
+        service = DrawSourceService(engine)
+        await service.update(instance['id'], validated_data)
+        return await service.get_for_user(user['id'], instance['id'])
 
 
-class DrawSourceCreateSchema(Schema):
-    type = EnumField(enum=db.DrawSourceType, required=True)
-    name = fields.Str(required=True)
-    company_id = fields.Str(required=True)
-    color = fields.Str(required=True)
-    code = fields.Str(required=True)
-    color_category = fields.Str()
+class DrawSourceCreateSerializer(ModelSerializer):
     quantity = fields.Int()
-    resource = EnumField(enum=db.DrawSourceResource)
-
-
-class UserDrawSourceRelationshipSchema(Schema):
-    draw_source_id = fields.UUID()
-    user_id = fields.UUID()
-    quantity = fields.Int()
-    resource = EnumField(enum=db.DrawSourceResource)
+    resource = fields.Enum(db.DrawSourceResource)
 
     class Meta:
-        unknown = EXCLUDE
+        model = db.draw_source
+        fields = ('type', 'name', 'company_id', 'color', 'code', 'color_category', 'quantity', 'resource')
+
+
+class UserDrawSourceRelationshipSerializer(ModelSerializer):
+    class Meta:
+        model = db.udsr
+        fields = '__all__'

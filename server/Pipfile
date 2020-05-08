@@ -16,6 +16,7 @@ marshmallow = "*"
 pyyaml = "*"
 py-bcrypt = "*"
 python-dotenv = "*"
+aiohttp-rest-framework = "==0.0.2a0"
 
 [requires]
 python_version = "3.8"

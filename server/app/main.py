@@ -1,5 +1,7 @@
 from aiohttp import web
 
+from aiohttp_rest_framework import setup_rest_framework
+
 from app.db import close_pg, init_pg
 from app.middlewares import jwt_middleware_with_cors
 from app.routes import setup_cors, setup_routes
@@ -18,6 +20,7 @@ app = web.Application(
 app['config'] = config
 setup_routes(app)
 setup_cors(app)
+setup_rest_framework(app)
 app.on_startup.append(init_pg)
 app.on_cleanup.append(close_pg)
 
